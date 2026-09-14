@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Trail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F0E6; --surface:#FFFFFF; --surface-2:#EAE6D6; --ink:#242318; --ink-soft:#5C594A;
+  --line:#DBD5C0; --language:#8B3F66; --language-soft:#F2E3EC; --math:#2E6F5C; --math-soft:#E2EFE9;
+  --gold:#9C7419; --good:#2E7D46; --good-soft:#E4F2E6; --bad:#B23B3B; --bad-soft:#FBE7E5; --chart:#3E5E8C;
+  --shadow: 0 1px 2px rgba(36,35,24,.06), 0 6px 20px rgba(36,35,24,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191910; --surface:#221F16; --surface-2:#2B2717; --ink:#ECE6D4; --ink-soft:#B3AC94;
+    --line:#3A3524; --language:#E48FBC; --language-soft:#3A2530; --math:#74D1B4; --math-soft:#1E332C;
+    --gold:#E7BC5C; --good:#7ECC91; --good-soft:#203024; --bad:#E38A83; --bad-soft:#3A2320; --chart:#8FB0E0;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191910; --surface:#221F16; --surface-2:#2B2717; --ink:#ECE6D4; --ink-soft:#B3AC94;
+  --line:#3A3524; --language:#E48FBC; --language-soft:#3A2530; --math:#74D1B4; --math-soft:#1E332C;
+  --gold:#E7BC5C; --good:#7ECC91; --good-soft:#203024; --bad:#E38A83; --bad-soft:#3A2320; --chart:#8FB0E0;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Work Sans",system-ui,sans-serif;line-height:1.5;padding-inline:16px;}
+h1,h2,h3,.display{font-family:"Fraunces",Georgia,serif;text-wrap:balance;letter-spacing:-0.01em;}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+button{font-family:inherit;cursor:pointer;}
+button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible{outline:2px solid var(--chart);outline-offset:2px;}
+.wrap{max-width:1040px;margin:0 auto;padding-block:20px 48px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--language),var(--math));display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;}
+.brand-name{font-family:"Fraunces",serif;font-size:20px;font-weight:600;}
+.top-actions{display:flex;gap:8px;align-items:center;}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:9px;font-size:14px;font-weight:600;transition:transform .08s ease, background .15s;}
+.btn:hover{background:var(--surface-2);}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.btn-primary:hover{opacity:.9;background:var(--ink);}
+.btn-ghost{border-color:transparent;background:transparent;}
+.btn-ghost:hover{background:var(--surface-2);}
+.btn-sm{padding:6px 10px;font-size:12.5px;border-radius:7px;}
+.btn[disabled]{opacity:.45;cursor:not-allowed;}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:600;}
+.pill-good{background:var(--good-soft);color:var(--good);}
+.pill-gold{background:color-mix(in srgb, var(--gold) 18%, transparent);color:var(--gold);}
+.pill-muted{background:var(--surface-2);color:var(--ink-soft);}
+.pill-bad{background:var(--bad-soft);color:var(--bad);}
+
+/* HOME */
+.stat-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px;}
+.stat-chip{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:120px;box-shadow:var(--shadow);}
+.stat-chip .num{font-family:"IBM Plex Mono";font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;}
+.stat-chip .lbl{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em;}
+.subject-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.subject-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:12px;}
+.subject-card:hover{border-color:var(--accent);}
+.subject-card.la{--accent:var(--language);}
+.subject-card.math{--accent:var(--math);}
+.subject-card .tag{color:var(--accent);font-weight:700;font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;}
+.subject-card h2{margin:2px 0 0;font-size:24px;}
+.ring{width:52px;height:52px;border-radius:50%;flex:none;background:conic-gradient(var(--accent) calc(var(--pct)*1%), var(--surface-2) 0);display:flex;align-items:center;justify-content:center;}
+.ring span{width:40px;height:40px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;font-family:"IBM Plex Mono";}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.areas-list{display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--ink-soft);}
+.areas-list b{color:var(--ink);}
+
+/* SUBJECT / TRAIL */
+.crumbs{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-soft);margin-bottom:10px;}
+.crumbs button{background:none;border:none;color:var(--ink-soft);font:inherit;padding:2px;text-decoration:underline;}
+.subject-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.subject-head h1{margin:0;font-size:30px;}
+.area-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+.area-tab{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600;font-size:13.5px;color:var(--ink-soft);}
+.area-tab.active{background:var(--ink);color:var(--bg);border-color:var(--ink);}
+.trail-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start;}
+@media (max-width:760px){.trail-layout{grid-template-columns:1fr;}}
+.trail{position:relative;display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:var(--shadow);}
+.node{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;border:1px solid transparent;background:none;text-align:left;width:100%;position:relative;}
+.node:not(.locked):hover{background:var(--surface-2);}
+.node.selected{background:var(--surface-2);border-color:var(--line);}
+.node.locked{opacity:.5;cursor:not-allowed;}
+.node .dot{width:28px;height:28px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:var(--surface-2);color:var(--ink-soft);}
+.node.mastered .dot{background:var(--gold);color:#fff;}
+.node.pending .dot{background:var(--chart);color:#fff;}
+.node .info b{display:block;font-size:13.5px;}
+.node .info small{color:var(--ink-soft);font-size:11.5px;}
+.node .connector{position:absolute;left:24px;top:38px;width:2px;height:calc(100% - 4px);background:var(--line);z-index:0;}
+
+.topic-panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow);}
+.topic-panel h2{margin:0 0 6px;font-size:24px;}
+.objective-box{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:14px;margin:14px 0 18px;border-left:3px solid var(--accent, var(--ink));}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;}
+@media (max-width:520px){.mode-grid{grid-template-columns:1fr;}}
+.mode-card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;}
+.mode-card h3{margin:0;font-size:15px;}
+.mode-card p{margin:0;font-size:12.5px;color:var(--ink-soft);}
+.history{display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+.history-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding:6px 0;}
+.history-row b{color:var(--ink);}
+
+/* QUIZ */
+.quiz-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.progress-track{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin-bottom:18px;}
+.progress-fill{height:100%;background:var(--accent,var(--ink));border-radius:99px;transition:width .25s ease;}
+.passage-box{background:var(--surface-2);border-radius:10px;padding:16px;font-size:14px;margin-bottom:18px;max-height:260px;overflow:auto;}
+.passage-box h4{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);}
+.question-text{font-size:18px;font-weight:600;margin:0 0 16px;font-family:"Fraunces",serif;text-wrap:balance;}
+.choices{display:flex;flex-direction:column;gap:9px;margin-bottom:18px;}
+.choice{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 14px;text-align:left;font-size:14.5px;}
+.choice:hover:not(:disabled){border-color:var(--accent,var(--ink));}
+.choice .letter{width:22px;height:22px;border-radius:6px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;flex:none;}
+.choice.correct{background:var(--good-soft);border-color:var(--good);}
+.choice.correct .letter{background:var(--good);color:#fff;}
+.choice.incorrect{background:var(--bad-soft);border-color:var(--bad);}
+.choice.incorrect .letter{background:var(--bad);color:#fff;}
+.choice.picked-neutral{border-color:var(--ink);}
+.choice:disabled{cursor:default;}
+.quiz-footer{display:flex;justify-content:space-between;align-items:center;}
+
+.result-banner{border-radius:14px;padding:20px;margin-bottom:18px;display:flex;align-items:center;gap:16px;}
+.result-banner.pass{background:var(--good-soft);}
+.result-banner.fail{background:var(--bad-soft);}
+.result-banner .score{font-family:"IBM Plex Mono";font-size:32px;font-weight:600;}
+.review-item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;font-size:13.5px;}
+.review-item .q{font-weight:600;margin-bottom:4px;}
+.review-item .ans{color:var(--ink-soft);}
+.review-item.wrong{border-left:3px solid var(--bad);}
+.review-item.right{border-left:3px solid var(--good);}
+
+/* WRITING */
+.rubric-list{display:flex;flex-direction:column;gap:8px;margin:14px 0 18px;}
+.rubric-item{display:flex;align-items:flex-start;gap:9px;font-size:14px;}
+.rubric-item input{margin-top:3px;}
+textarea{width:100%;min-height:180px;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);resize:vertical;}
+.char-count{font-size:12px;color:var(--ink-soft);text-align:right;margin-top:4px;}
+.note-box{background:var(--surface-2);border-radius:10px;padding:12px 14px;font-size:13.5px;margin:10px 0;border-left:3px solid var(--chart);}
+
+/* TEACHER */
+.teacher-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:20px;}
+.chart-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow);margin-bottom:22px;}
+.bars{display:flex;align-items:flex-end;gap:10px;height:120px;padding-top:20px;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;}
+.bar-col .v{font-size:11px;color:var(--ink-soft);font-family:"IBM Plex Mono";}
+.bar-col .bar{width:100%;max-width:34px;background:var(--chart);border-radius:5px 5px 3px 3px;min-height:3px;}
+.bar-col .d{font-size:11px;color:var(--ink-soft);margin-top:2px;}
+table.tt{width:100%;border-collapse:collapse;font-size:13.5px;}
+table.tt th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);padding:6px 10px;border-bottom:1px solid var(--line);}
+table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
+.section-title{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin:26px 0 10px;}
+.submission-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.submission-text{background:var(--surface-2);border-radius:8px;padding:12px;font-size:13.5px;white-space:pre-wrap;margin:10px 0;}
+.overflow-x{overflow-x:auto;}
+
+/* MODAL */
+.modal-back{position:fixed;inset:0;background:rgba(20,19,12,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20;}
+.modal{background:var(--surface);border-radius:14px;padding:24px;max-width:340px;width:100%;box-shadow:var(--shadow);}
+.modal input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;margin:10px 0;background:var(--bg);color:var(--ink);}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+.empty-note{color:var(--ink-soft);font-size:13.5px;padding:14px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Curriculum data ---------- */
+const CURRICULUM = {
+  la: { name:"Language Arts", areas: {
+    vocab: { name:"Vocabulary", topics: [
+      { t:"Context Clues Basics", o:"Use clues in the surrounding sentence to figure out what an unfamiliar word means.",
+        p:[
+          ["The hikers were exhausted after the long climb, so they rested at the summit before heading back down. What does “summit” most likely mean?",["The base of a mountain","The top of a mountain","A resting bench","A type of trail"],1],
+          ["Marco's argument was so cogent that even his skeptical opponents nodded in agreement. “Cogent” most likely means:",["Confusing","Convincing","Rude","Quiet"],1],
+          ["Because the well had run dry, villagers had to travel far to find a source of potable water. “Potable” most likely means:",["Polluted","Drinkable","Frozen","Salty"],1],
+          ["The critic's scathing review left the young author feeling humiliated. “Scathing” most likely means:",["Harshly critical","Glowing with praise","Neutral","Confusing"],0]
+        ],
+        a:[
+          ["The old bridge was so rickety that no one dared drive a car across it. “Rickety” most likely means:",["Sturdy","Unstable","Modern","Wide"],1],
+          ["Her meticulous attention to detail meant she never made mistakes in her lab reports. “Meticulous” means:",["Careless","Very careful","Quick","Lazy"],1],
+          ["The desert was utterly desolate — no plants, no water, no signs of life for miles. “Desolate” means:",["Crowded","Empty and lifeless","Beautiful","Dangerous"],1],
+          ["Even though he was exonerated by the jury, some neighbors still treated him as guilty. “Exonerated” means:",["Cleared of blame","Found guilty","Arrested","Ignored"],0],
+          ["The toddler's tantrum subsided as soon as she saw the ice cream truck. “Subsided” means:",["Got worse","Became calmer","Grew louder","Stopped forever"],1],
+          ["The professor's lecture was so verbose that half the class lost track of the point. “Verbose” means:",["Brief","Wordy","Silent","Funny"],1]
+        ]},
+      { t:"Prefixes & Suffixes", o:"Use common prefixes (re-, un-, mis-, dis-, pre-) and suffixes (-ful, -less, -able, -tion) to figure out word meaning.",
+        p:[
+          ["“Misunderstand” means:",["To understand again","To understand incorrectly","To not understand at all","To explain"],1],
+          ["Which prefix means “not”?",["re-","un-","pre-","sub-"],1],
+          ["“Fearless” means:",["Full of fear","Without fear","Causing fear","Fearing often"],1],
+          ["The suffix “-able” in “washable” means:",["Full of","Able to be","Without","Before"],1]
+        ],
+        a:[
+          ["“Preview” means:",["To view again","To view before","To not view","To view fully"],1],
+          ["“Disagree” means:",["To agree strongly","To agree again","To not agree","To agree first"],2],
+          ["Which suffix turns a verb into “the act of doing it,” as in “celebration”?",["-ful","-less","-tion","-able"],2],
+          ["“Colorful” means:",["Without color","Full of color","Before color","Not colored"],1],
+          ["“Rewrite” means:",["Write badly","Write again","Not write","Write before"],1],
+          ["“Powerless” means:",["Full of power","Before power","Without power","Able to power"],2]
+        ]},
+      { t:"Greek & Latin Roots", o:"Use common Greek and Latin roots (bio, geo, tele, scrib/script, port, dict) to determine word meaning.",
+        p:[
+          ["The root “bio” means:",["Life","Earth","Far","Write"],0],
+          ["“Telephone” uses “tele-” meaning:",["Near","Far","Sound","Light"],1],
+          ["The root “scrib/script” (as in “describe,” “manuscript”) means:",["To carry","To write","To speak","To see"],1],
+          ["“Portable” uses the root “port” meaning:",["To carry","To write","To say","To build"],0]
+        ],
+        a:[
+          ["“Geography” uses “geo” meaning:",["Life","Earth","People","Write"],1],
+          ["“Predict” uses “dict” meaning:",["To write","To speak or say","To carry","To see"],1],
+          ["“Biology” is the study of:",["The earth","Far distances","Living things","Writing"],2],
+          ["“Transport” uses “port” meaning:",["To carry across","To speak","To see through","To write over"],0],
+          ["“Telescope” combines “tele” (far) and “scope” (to see). It most likely means a tool to:",["Write far away","See far away","Carry far away","Hear far away"],1],
+          ["“Inscription” uses “script,” meaning it involves:",["Carrying","Writing","Seeing","Hearing"],1]
+        ]},
+      { t:"Synonyms & Antonyms", o:"Identify synonyms and antonyms and use them to understand word relationships and improve writing.",
+        p:[
+          ["A synonym for “happy” is:",["Furious","Joyful","Tired","Sorrowful"],1],
+          ["An antonym for “ancient” is:",["Old","Modern","Ruined","Historic"],1],
+          ["A synonym for “enormous” is:",["Tiny","Huge","Average","Narrow"],1],
+          ["An antonym for “generous” is:",["Giving","Kind","Selfish","Wealthy"],2]
+        ],
+        a:[
+          ["A synonym for “brave”:",["Cowardly","Courageous","Careless","Calm"],1],
+          ["An antonym for “arrive”:",["Depart","Enter","Reach","Appear"],0],
+          ["A synonym for “furious”:",["Content","Enraged","Sleepy","Confused"],1],
+          ["An antonym for “transparent”:",["Clear","Opaque","Shiny","Thin"],1],
+          ["A synonym for “reluctant”:",["Eager","Hesitant","Angry","Confident"],1],
+          ["An antonym for “abundant”:",["Plentiful","Scarce","Large","Common"],1]
+        ]},
+      { t:"Multiple-Meaning Words", o:"Determine the correct meaning of a word with multiple meanings based on its context in a sentence.",
+        p:[
+          ["“She will address the crowd before the ceremony begins.” Here, “address” means:",["A location","To speak to","To mail something","A name tag"],1],
+          ["“The bark of the old oak tree was rough and gray.” Here, “bark” means:",["A dog's sound","The outer covering of a tree","A small boat","To shout"],1],
+          ["“He couldn't bear the thought of losing the game.” Here, “bear” means:",["A large animal","To carry weight","To tolerate","A stock market term"],2],
+          ["“Please close the window; it's getting cold.” Here, “close” means:",["Nearby","To shut","Intimate","The end"],1]
+        ],
+        a:[
+          ["“The company will fine anyone who breaks the rule.” Here, “fine” means:",["Excellent","A penalty payment","Thin","Clear weather"],1],
+          ["“The pitcher threw a fastball for a strike.” Here, “pitcher” means:",["A container for liquid","A baseball player who throws","A type of plant","A music instrument"],1],
+          ["“I need to book a flight for next week.” Here, “book” means:",["A bound set of pages","To reserve","A chapter","To read"],1],
+          ["“The tear in her dress needed mending.” Here, “tear” (rhymes with “care”) means:",["A drop of water from crying","A rip","To run quickly","To laugh"],1],
+          ["“The wind can really pick up near the coast.” Here, “wind” (rhymes with “pinned”) means:",["To turn a key","Moving air","To twist a rope","A snake's movement"],1],
+          ["“She will present the award to the winner.” Here, “present” means:",["A gift","To give formally in front of others","Now, currently","To hide"],1]
+        ]},
+      { t:"Connotation & Denotation", o:"Distinguish between the literal meaning (denotation) and the feeling or association (connotation) of related words.",
+        p:[
+          ["Which word has a more positive connotation than “cheap”?",["Inexpensive","Stingy","Worthless","Shabby"],0],
+          ["Which word has a more negative connotation than “thin”?",["Slender","Skinny","Fit","Lean"],1],
+          ["Both “childish” and “youthful” describe someone young-acting, but “childish” carries a:",["Positive connotation","Negative connotation","Neutral, scientific meaning","No connotation"],1],
+          ["Which word has the most positive connotation for someone who doesn't spend much money?",["Cheap","Stingy","Thrifty","Miserly"],2]
+        ],
+        a:[
+          ["Which word has a negative connotation compared to “confident”?",["Assured","Cocky","Self-assured","Certain"],1],
+          ["Which word has a positive connotation compared to “nosy”?",["Curious","Snooping","Prying","Meddling"],0],
+          ["“Unique” and “weird” can both describe something unusual, but “weird” often carries a:",["Positive connotation","Negative connotation","Scientific meaning","Formal tone"],1],
+          ["Which word has the most negative connotation for a determined person?",["Persistent","Stubborn","Dedicated","Committed"],1],
+          ["Which word has a positive connotation compared to “lazy”?",["Idle","Relaxed","Sluggish","Slothful"],1],
+          ["“House” and “home” have the same denotation, but “home” carries an added connotation of:",["Coldness","Warmth and belonging","Formality","Size"],1]
+        ]}
+    ]},
+    reading: { name:"Reading Comprehension", topics: [
+      { t:"Main Idea & Supporting Details", o:"Identify the main idea of a text and the details that support it.",
+        passageP:"Honeybees are essential to many ecosystems. As they travel from flower to flower collecting nectar, they transfer pollen, which allows plants to reproduce. Without bees, many fruits, vegetables, and nuts would become far more scarce. In recent years, however, bee populations have declined due to pesticides, habitat loss, and disease. Scientists and farmers are now working together to protect these vital insects.",
+        passageA:"Volcanoes form when molten rock, called magma, rises through cracks in the Earth's crust. When a volcano erupts, the magma — now called lava — along with ash and gases, bursts out onto the surface. While eruptions can be destructive, they also create new landforms and enrich the surrounding soil with nutrients. This is why, despite the dangers, many farming communities have historically settled near volcanoes. Scientists monitor volcanic activity closely to warn nearby residents before a major eruption occurs.",
+        p:[
+          ["What is the main idea of the passage?",["Bees make honey for farmers","Bees are important pollinators facing serious threats","Pesticides are used on all farms","Fruits and vegetables are healthy"],1],
+          ["Which detail supports the idea that bees are important to ecosystems?",["Bees decline due to disease","Bees transfer pollen between flowers","Scientists study bees","Farmers use pesticides"],1],
+          ["Which of the following is a cause of declining bee populations?",["Cold weather","Pesticides","Overpopulation","Too much nectar"],1],
+          ["Who is working to protect bees, according to the passage?",["Beekeepers only","The government only","Scientists and farmers","No one yet"],2]
+        ],
+        a:[
+          ["What is the main idea of this passage?",["Volcanoes only cause destruction","Volcanoes are dangerous and should be avoided by everyone","Volcanoes can be destructive but also beneficial, so they are closely monitored","Lava is the same as magma"],2],
+          ["What is magma called once it reaches the surface?",["Ash","Crust","Lava","Soil"],2],
+          ["Why have farming communities historically settled near volcanoes?",["The land is flat","The soil is enriched with nutrients","It's cooler there","There's more water"],1],
+          ["What is the purpose of monitoring volcanic activity?",["To predict earthquakes","To warn residents before major eruptions","To measure ash color","To study lava recipes"],1],
+          ["Which detail supports the idea that eruptions can be destructive?",["They enrich soil","They burst out ash and gases onto the surface","Farmers like the soil","Scientists study them"],1],
+          ["Based on the passage, what can you conclude about scientists who study volcanoes?",["They ignore nearby communities","They try to protect people by tracking volcanic activity","They cause eruptions","They only study lava color"],1]
+        ]},
+      { t:"Making Inferences", o:"Use evidence from the text to make logical inferences about what is not directly stated.",
+        passageP:"Maria stared at the blank answer sheet, tapping her pencil against the desk. Around her, classmates were already flipping to the second page. She glanced at the clock, then quickly erased what little she had written and started over.",
+        passageA:"Jamal's hands were shaking as he laced up his cleats. His coach patted him on the shoulder and said, 'Just like practice.' The stands were packed, louder than Jamal had ever heard them. When the whistle blew, he took a deep breath and ran onto the field.",
+        p:[
+          ["What can you infer about how Maria feels?",["Confident","Anxious about the test","Bored","Excited"],1],
+          ["What evidence supports the inference that Maria is behind her classmates?",["She is tapping her pencil","Classmates are already on the second page while she has a blank sheet","She glanced at the clock","She erased her work"],1],
+          ["Why did Maria erase her work?",["She finished early","She was likely unhappy with her answer","The teacher told her to","She ran out of time"],1],
+          ["What can you infer about the setting?",["A playground","A classroom during a test","A library during story time","A gym class"],1]
+        ],
+        a:[
+          ["What can you infer about how Jamal feels before the game?",["Bored","Nervous","Angry","Confused"],1],
+          ["What evidence suggests Jamal is playing in an important game?",["He is lacing his cleats","The stands are packed and louder than usual","He took a deep breath","The whistle blew"],1],
+          ["Why might the coach say “Just like practice”?",["To confuse Jamal","To help calm his nerves by comparing it to something familiar","To criticize him","To end practice"],1],
+          ["What can you infer about Jamal's experience level with crowds this size?",["He's used to crowds this size","This crowd is unusually large for him","He prefers no audience","He is deaf to noise"],1],
+          ["What is the setting of this passage?",["A classroom","A sports field before a game","A doctor's office","A quiet library"],1],
+          ["Based on the passage, what will most likely happen next?",["Jamal will go home","Jamal will begin playing in the game","The game will be cancelled","Jamal will quit the team"],1]
+        ]},
+      { t:"Theme", o:"Determine the theme, or central message, of a story.",
+        passageP:"A tortoise and a hare agreed to race. The hare, confident in his speed, dashed ahead and then stopped to nap, certain he had plenty of time. The tortoise plodded on steadily without stopping. When the hare woke, he sprinted to the finish line, but the tortoise had already crossed it.",
+        passageA:"Elena spent weeks building a model bridge for the science fair, testing and rebuilding it after every failure. Her friend Sam finished his in one afternoon and teased her for taking so long. On the day of the fair, Sam's bridge collapsed under the test weight, while Elena's held strong. Sam admitted he should have taken his time like she did.",
+        p:[
+          ["What is the theme of this story?",["Fast animals always win","Slow and steady wins the race","Napping is bad for hares","Tortoises are smarter than hares"],1],
+          ["Which detail best supports the theme?",["The hare was confident","The tortoise moved steadily without stopping while the hare napped","They agreed to race","The hare was fast"],1],
+          ["What lesson could a reader apply to their own life?",["Never compete","Consistent effort can be more valuable than natural talent","Speed doesn't matter","Animals can talk"],1],
+          ["What caused the hare to lose?",["The tortoise cheated","Overconfidence led him to stop and nap","He was too slow","He got lost"],1]
+        ],
+        a:[
+          ["What is the theme of this passage?",["Building bridges is easy","Careful, persistent effort leads to better results than rushing","Friends should never compete","Science fairs are unfair"],1],
+          ["Which detail best supports the theme?",["Sam teased Elena","Elena tested and rebuilt her bridge after every failure, and it held strong","It was a science fair","Sam finished in one afternoon"],1],
+          ["How does Sam likely feel at the end of the passage?",["Proud","Regretful","Indifferent","Angry at Elena"],1],
+          ["What can you infer caused Sam's bridge to collapse?",["He rushed and didn't test it thoroughly","Elena sabotaged it","The weight was unfair","He used bad materials"],0],
+          ["What is the best summary of this passage?",["Two friends build bridges for a science fair; a lesson in patience","Sam wins the science fair","Elena and Sam stop being friends","Bridges are hard to build"],0],
+          ["What lesson does Sam learn?",["Friendship matters more than winning","Taking time and care leads to better results","Science fairs are pointless","Elena is smarter than him"],1]
+        ]},
+      { t:"Author's Purpose & Point of View", o:"Identify the author's purpose (to inform, persuade, or entertain) and point of view in a text.",
+        p:[
+          ["“Recycling just one aluminum can saves enough energy to power a TV for three hours. Please start recycling today!” This text's main purpose is to:",["Entertain","Persuade","Inform only, with no opinion","Narrate a story"],1],
+          ["“The mitochondria is the organelle responsible for producing energy in a cell.” This text's main purpose is to:",["Persuade","Entertain","Inform","Narrate"],2],
+          ["“Once upon a time, a curious fox set out to find the end of the rainbow.” This text's main purpose is to:",["Inform","Entertain","Persuade","Argue"],1],
+          ["A text written entirely from a character's own thoughts, using “I,” is written in which point of view?",["Third person","First person","Second person","Omniscient"],1]
+        ],
+        a:[
+          ["“You should always wear a helmet when biking — it could save your life.” The author's purpose is to:",["Entertain","Inform neutrally","Persuade","Narrate"],2],
+          ["“The Great Wall of China stretches over 13,000 miles and was built over many centuries.” The author's purpose is to:",["Persuade","Inform","Entertain","Argue against walls"],1],
+          ["“She ran through the enchanted forest, laughing as fireflies lit her path.” The author's purpose is to:",["Inform","Persuade","Entertain","Instruct"],2],
+          ["A story told by a narrator who knows the thoughts and feelings of every character is written in which point of view?",["First person","Second person","Third person limited","Third person omniscient"],3],
+          ["“In my opinion, our school lunches need more vegetable options.” This is an example of:",["A fact","An opinion meant to persuade","Entertainment","A narrative"],1],
+          ["A narrator who refers to a single character as “he” or “she” and only knows that character's thoughts is writing in:",["First person","Third person limited","Third person omniscient","Second person"],1]
+        ]},
+      { t:"Summarizing", o:"Write or identify a concise summary that captures the most important ideas of a text without unnecessary detail.",
+        passageP:"Sea turtles migrate thousands of miles between feeding grounds and nesting beaches. Females return to the very beach where they hatched to lay their own eggs, guided by Earth's magnetic field. After laying dozens of eggs in the sand, they return to the ocean, leaving the eggs to hatch on their own about two months later.",
+        passageA:"Coral reefs, though they cover less than 1% of the ocean floor, support roughly a quarter of all marine species. These reefs are built slowly over centuries by tiny animals called coral polyps, which secrete hard calcium carbonate skeletons. Rising ocean temperatures, however, cause coral to expel the algae living in their tissues, a process called bleaching, which can lead to the coral's death if conditions don't improve. Protecting reefs means reducing pollution and slowing climate change.",
+        p:[
+          ["Which is the best summary?",["Sea turtles live in the ocean and eat fish","Female sea turtles migrate long distances to lay eggs on the beach where they were born, then leave them to hatch alone","Sea turtles use magnets to swim","Turtles lay eggs every day"],1],
+          ["Which detail is important enough to include in a summary?",["The exact number of eggs","That females return to their birth beach to nest","The color of the sand","The time of year"],1],
+          ["Which of these is NOT necessary to include in a short summary of the passage?",["Females nest on their birth beach","They migrate thousands of miles","The exact number of eggs laid","Eggs hatch after being left alone"],2],
+          ["A good summary should:",["Include every detail from the text","Only state the writer's opinion","Capture the main points in fewer words","Be longer than the original text"],2]
+        ],
+        a:[
+          ["Which is the best summary?",["Coral reefs are colorful and found in oceans","Coral reefs support huge amounts of marine life but are threatened by rising temperatures, which cause bleaching","Coral polyps are tiny animals","The ocean floor is mostly covered in reefs"],1],
+          ["Which detail is essential to a summary of this passage?",["The exact percentage of ocean floor covered by reefs","That warming oceans cause bleaching that can kill coral","The specific chemical name for coral's skeleton","How reefs look underwater"],1],
+          ["What does “bleaching” mean according to the passage?",["Reefs turning white from cleaning products","Coral expelling algae due to heat stress, which can lead to death","Coral growing faster","Coral changing color for camouflage"],1],
+          ["Which sentence best captures the passage's call to action?",["Reefs are beautiful","Protecting reefs requires reducing pollution and slowing climate change","Coral polyps are small","Reefs cover 1% of the ocean"],1],
+          ["Which of these is too minor a detail to include in a short summary?",["Reefs support a quarter of marine species","The precise term “calcium carbonate” for coral's skeleton material","Bleaching can kill coral","Climate change threatens reefs"],1],
+          ["A concise summary of a passage should mainly:",["Copy the first sentence","List every fact","Restate the central ideas in the writer's own words, briefly","Give a personal opinion about the topic"],2]
+        ]},
+      { t:"Compare & Contrast / Citing Evidence", o:"Compare and contrast information across texts and support answers with evidence from the text.",
+        passageP:"Text A: Wolves are highly social animals that live and hunt in packs, using teamwork to take down large prey.\n\nText B: Mountain lions are solitary hunters, typically hunting alone and defending large territories from other mountain lions.",
+        passageA:"Text A: Solar power converts sunlight directly into electricity using photovoltaic panels. It produces no emissions while generating power, but panels generate no electricity at night and less on cloudy days.\n\nText B: Wind power uses turbines to convert moving air into electricity. Like solar, it produces no emissions during operation, but turbines only generate significant power when wind speeds are within a certain range.",
+        p:[
+          ["How are wolves and mountain lions different, based on the texts?",["Wolves hunt alone; mountain lions hunt in packs","Wolves hunt in packs; mountain lions hunt alone","Both hunt in packs","Neither hunts"],1],
+          ["Which phrase from Text A provides evidence that wolves are social?",["“solitary hunters”","“live and hunt in packs”","“defending large territories”","“large prey”"],1],
+          ["Which phrase from Text B shows mountain lions are territorial?",["“using teamwork”","“hunting alone”","“defending large territories from other mountain lions”","“highly social”"],2],
+          ["What do both animals have in common, based on the texts?",["Both are hunters","Both live in packs","Both are herbivores","Both avoid large prey"],0]
+        ],
+        a:[
+          ["What do solar and wind power have in common, according to the texts?",["Both work best at night","Both produce no emissions during operation","Both require no equipment","Both work in any weather"],1],
+          ["What is a key difference between solar and wind power limitations?",["Solar is limited by darkness/clouds; wind is limited by wind speed range","Solar is limited by wind speed; wind is limited by sunlight","Both have identical limitations","Neither has limitations"],0],
+          ["Which phrase from Text A provides evidence about solar's limitation?",["“converts sunlight directly”","“produces no emissions”","“generate no electricity at night and less on cloudy days”","“photovoltaic panels”"],2],
+          ["Which phrase from Text B provides evidence about wind's limitation?",["“convert moving air into electricity”","“produces no emissions during operation”","“only generate significant power when wind speeds are within a certain range”","“uses turbines”"],2],
+          ["If citing evidence that both are clean energy sources, which detail would you use from both texts?",["Their cost","Their emission-free operation","Their equipment type","Their invention date"],1],
+          ["Based on both texts, what could you conclude about renewable energy in general?",["It works perfectly all the time","Different renewable sources may have different weather-related limitations","It always produces emissions","It's identical to fossil fuels"],1]
+        ]}
+    ]},
+    writing: { name:"Writing", topics: [
+      { t:"Topic Sentences & Paragraph Structure", o:"Write and identify strong topic sentences and organize a paragraph with a clear structure.",
+        p:[
+          ["Which is the best topic sentence for a paragraph about the benefits of exercise?",["I like sports","Exercise offers many benefits for both the body and the mind","Yesterday I went for a run","There are many sports teams"],1],
+          ["A paragraph's supporting sentences should:",["Introduce a completely new topic","Provide details and evidence for the topic sentence","Always ask questions","Be unrelated to the topic sentence"],1],
+          ["Which sentence best belongs as a concluding sentence?",["In summary, regular exercise improves both physical and mental well-being","My favorite color is blue","Let's talk about something else","Exercise was invented long ago"],0],
+          ["Which topic sentence is too broad or vague for a focused paragraph?",["Dogs make loyal and loving pets","Things are interesting","Recycling reduces waste in landfills","The library offers free tutoring after school"],1]
+        ],
+        a:[
+          ["Which is the best topic sentence for a paragraph about why libraries are valuable community resources?",["I went to the library once","Libraries provide much more than books — they offer resources for people of all ages","Books are heavy","My town has a library"],1],
+          ["Which sentence does NOT belong in a paragraph with the topic sentence “Recycling helps protect the environment”?",["Recycling reduces the amount of waste in landfills","My favorite ice cream flavor is chocolate","Recycled materials can be reused to make new products","Recycling conserves natural resources like trees and water"],1],
+          ["What is the purpose of a concluding sentence in a paragraph?",["To introduce a brand-new idea","To wrap up and reinforce the main idea","To ask an unrelated question","To repeat the topic sentence word-for-word"],1],
+          ["Which topic sentence is most specific and focused?",["Sports are fun","Playing basketball improved my teamwork and confidence","I like games","There are many activities"],1],
+          ["A well-organized paragraph typically follows which structure?",["Conclusion, details, topic sentence","Topic sentence, supporting details, conclusion","Random order","Only supporting details"],1],
+          ["Which supporting detail best fits the topic sentence “Owning a pet teaches children responsibility”?",["Pets need to be fed and cared for every day","My neighbor has a pet snake","Some pets are expensive","Cats are more independent than dogs"],0]
+        ]},
+      { t:"Organizing Ideas & Transitions", o:"Use transition words and logical order to connect ideas smoothly within and between paragraphs.",
+        p:[
+          ["Which transition word best shows a contrast between two ideas?",["Similarly","However","For example","First"],1],
+          ["Which transition best introduces an example?",["Therefore","For instance","In contrast","Finally"],1],
+          ["Which transition word shows a cause-and-effect relationship?",["Meanwhile","Therefore","Similarly","Next"],1],
+          ["“First, gather your materials. ____, preheat the oven.” Which transition best fits the blank?",["However","Next","In contrast","For example"],1]
+        ],
+        a:[
+          ["Which transition word shows sequence or order?",["Although","Then","However","Similarly"],1],
+          ["“I studied hard for the test. ____, I felt confident walking in.” Best transition:",["However","As a result","In contrast","For example"],1],
+          ["Which transition word signals an additional, similar point?",["But","Furthermore","Instead","Unlike"],1],
+          ["“Some students prefer working alone. ____, others thrive in group settings.” Best transition:",["Similarly","On the other hand","As a result","For example"],1],
+          ["Which transition word would best conclude a paragraph?",["First","In conclusion","For example","Meanwhile"],1],
+          ["“It rained all weekend. ____, the outdoor festival was cancelled.” Best transition:",["Similarly","As a result","For instance","Although"],1]
+        ]},
+      { t:"Supporting Claims with Evidence", o:"Support a claim or opinion with relevant facts, examples, or reasons rather than vague statements.",
+        p:[
+          ["Which sentence best supports the claim “School uniforms reduce distractions”?",["Uniforms are boring","Studies show students focus more on schoolwork when clothing choices aren't a distraction","I don't like uniforms","Some schools don't have uniforms"],1],
+          ["Which is the strongest evidence for the claim “Regular reading improves vocabulary”?",["Reading is fun","Students who read 20 minutes daily score higher on vocabulary tests, according to research","Books have pages","My friend likes books"],1],
+          ["Which sentence is just an opinion with no supporting evidence?",["I think pizza is the best food","Studies show recycling one ton of paper saves 17 trees","The bridge is 200 feet long","Water boils at 100°C"],0],
+          ["A strong argumentative paragraph should include:",["Only opinions","Claims backed by facts, examples, or reasoning","Unrelated stories","No evidence at all"],1]
+        ],
+        a:[
+          ["Which sentence provides the strongest evidence for the claim “Exercise improves mental health”?",["Exercise feels nice","A study found that people who exercise three times a week report 30% less anxiety","I exercise sometimes","Gyms are popular"],1],
+          ["Which statement is an unsupported opinion rather than evidence?",["The experiment showed a 15-degree temperature increase","According to the report, sales rose 20%","I just feel like this is the best option","The survey included 500 participants"],2],
+          ["To support the claim “Homework helps students learn,” which type of evidence would be most convincing?",["A personal guess","A study comparing test scores of students with and without homework","An unrelated story","A vague statement like “everyone knows this”"],1],
+          ["Which sentence uses a specific example to support a claim?",["Volunteering is good","When Maria volunteered at the animal shelter, she learned responsibility and empathy","Volunteering is fine, I guess","Some people volunteer"],1],
+          ["Why is it important to cite evidence when making a claim?",["It makes the paragraph longer","It makes the argument more convincing and credible","It's required for no real reason","It replaces the need for a topic sentence"],1],
+          ["Which is the best way to strengthen the claim “Our school needs a longer lunch period”?",["Restate the claim again","Add a fact, like a survey showing 80% of students feel rushed during lunch","Say it louder","Change the topic"],1]
+        ]},
+      { t:"Grammar & Mechanics", o:"Identify and correct common grammar, punctuation, and sentence-structure errors.",
+        p:[
+          ["Which sentence is correctly punctuated?",["Its a beautiful day outside.","It's a beautiful day outside.","Its' a beautiful day outside.","It is' a beautiful day outside."],1],
+          ["Choose the correctly capitalized sentence:",["We visited Paris last Summer.","We visited paris last summer.","We visited Paris last summer.","we visited Paris Last summer."],2],
+          ["Which sentence fixes this run-on: “I finished my homework I went outside to play.”?",["I finished my homework, I went outside to play.","I finished my homework, and then I went outside to play.","I finished my homework I, went outside to play.","I finished, my homework I went outside to play."],1],
+          ["Which sentence uses correct subject-verb agreement?",["The group of students are ready.","The group of students is ready.","The group of students were ready always.","The group of student is ready."],1]
+        ],
+        a:[
+          ["Which sentence correctly uses an apostrophe?",["The dogs bone was buried.","The dog's bone was buried.","The do'gs bone was buried.","The dogs bone's was buried."],1],
+          ["Choose the sentence with no error:",["Me and him went to the store.","Him and I went to the store.","He and I went to the store.","I and he went to the store."],2],
+          ["Which sentence corrects this fragment: “Running through the park in the early morning.”?",["Running through the park in the early morning, she felt refreshed.","Running, through the park in the early, morning.","In the early morning through running the park.","Through the park running early in the morning."],0],
+          ["Which sentence uses correct comma placement?",["After the game, we went out for pizza.","After the game we, went out for pizza.","After, the game we went out for pizza.","After the game we went, out for pizza."],0],
+          ["Which sentence has correct subject-verb agreement?",["Neither of the boys were on time.","Neither of the boys was on time.","Neither of the boys is being on time.","Neither of the boy was on time."],1],
+          ["Which is the correctly punctuated sentence?",["“Watch out!” she yelled.","Watch out she yelled.","“Watch out” she yelled!","Watch out, she yelled!"],0]
+        ]},
+      { t:"Sentence Variety", o:"Combine short, choppy sentences into longer, more sophisticated sentences using conjunctions and varied structure.",
+        p:[
+          ["Combine effectively: “The dog barked. The dog ran to the door.”",["The dog barked, the dog ran to the door.","The dog barked and ran to the door.","The dog barked. And ran to the door.","Barked the dog and ran to the door."],1],
+          ["Combine effectively: “It started to rain. We went inside.”",["It started to rain, so we went inside.","It started to rain we went inside.","It started to rain. So, we, went inside.","Rain started it we went inside."],0],
+          ["Which combined sentence is best? “She studied hard. She passed the test.”",["She studied hard, she passed the test.","Because she studied hard, she passed the test.","She studied hard passed the test.","Studied hard she passed the test."],1],
+          ["Combining short sentences with conjunctions and varied structure mainly helps writing by:",["Making it longer for no reason","Making it flow better and sound more sophisticated","Making it harder to read","Removing all details"],1]
+        ],
+        a:[
+          ["Combine effectively: “The sun set. The sky turned orange.”",["The sun set, and the sky turned orange.","The sun set the sky turned orange.","The sun, set the sky turned orange.","Set the sun and the sky turned orange."],0],
+          ["Combine effectively: “I wanted to go to the party. I had too much homework.”",["I wanted to go to the party, but I had too much homework.","I wanted to go to the party I had too much homework.","I wanted, to go to the party but too much homework.","Party the I wanted but homework too much."],0],
+          ["Which shows the best use of a subordinating conjunction?",["Although it was cold, we went hiking.","It was cold, we went hiking.","Cold although we went hiking.","We went hiking it was cold although."],0],
+          ["Combine effectively using an appositive: “My teacher is Mrs. Lee. She has taught for 20 years.”",["My teacher, Mrs. Lee, has taught for 20 years.","My teacher is Mrs. Lee she has taught for 20 years.","Mrs. Lee my teacher has taught, for 20 years.","Taught for 20 years is my teacher Mrs. Lee."],0],
+          ["Which sentence uses varied sentence structure most effectively?",["I woke up. I ate breakfast. I left for school.","After I woke up and ate breakfast, I left for school.","Woke up ate breakfast left for school.","I, woke up, ate, breakfast, left, for school."],1],
+          ["Combine effectively: “The movie was long. It was still entertaining.”",["The movie was long, but it was still entertaining.","The movie was long it was still entertaining.","Long the movie was still entertaining.","The movie, was long still entertaining."],0]
+        ]},
+      { t:"Writing Task: Take a Stand", type:"writing",
+        o:"Apply topic sentences, organization, transitions, evidence, and grammar to write a complete, well-structured paragraph.",
+        prompt:"Write a paragraph (5–8 sentences) arguing for or against this claim: “Students should be allowed to choose their own seats in class.” Include a clear topic sentence, at least two pieces of supporting evidence or reasoning, a transition word, and a concluding sentence.",
+        rubric:["My paragraph starts with a clear topic sentence stating my position.","I included at least two reasons or pieces of evidence.","I used at least one transition word (e.g., however, therefore, for example).","My paragraph ends with a concluding sentence.","I checked my spelling, capitalization, and punctuation."]
+      }
+    ]}
+  }},
+  math: { name:"Pre-Algebra", areas: { prealg: { name:"Pre-Algebra", topics: [
+      { t:"Ratios & Rates", o:"Understand and write ratios to describe relationships between two quantities, and compute rates.",
+        p:[
+          ["There are 12 apples and 8 oranges in a basket. What is the ratio of apples to oranges, written in simplest form?",["3:2","2:3","4:3","6:4"],0],
+          ["A recipe calls for 2 cups of flour for every 3 cups of sugar. If you use 6 cups of flour, how much sugar do you need?",["6 cups","9 cups","4 cups","12 cups"],1],
+          ["If a car travels 150 miles in 3 hours, what is its rate in miles per hour?",["30 mph","50 mph","45 mph","60 mph"],1],
+          ["Which ratio is equivalent to 4:5?",["8:10","5:4","4:10","8:5"],0]
+        ],
+        a:[
+          ["Simplify the ratio 18:24 to lowest terms.",["3:4","6:8","9:12","2:3"],0],
+          ["A class has 10 boys and 15 girls. What is the ratio of boys to total students?",["10:15","2:3","2:5","3:5"],2],
+          ["If 5 pencils cost $2, how much would 15 pencils cost at the same rate?",["$4","$6","$8","$10"],1],
+          ["A car uses 8 gallons of gas to travel 240 miles. What is the rate in miles per gallon?",["20","30","24","32"],1],
+          ["Which ratio is NOT equivalent to 3:7?",["6:14","9:21","12:28","6:12"],3],
+          ["A recipe uses a ratio of 3 eggs to 2 cups of milk. How many eggs are needed for 8 cups of milk?",["10","12","6","16"],1]
+        ]},
+      { t:"Unit Rates & Proportions", o:"Compute unit rates and solve proportions to find missing values.",
+        p:[
+          ["If 4 notebooks cost $10, what is the unit price per notebook?",["$2.00","$2.50","$3.00","$4.00"],1],
+          ["Solve the proportion: 3/4 = x/12. What is x?",["8","9","10","16"],1],
+          ["A runner covers 6 miles in 1.5 hours. What is her unit rate in miles per hour?",["3 mph","4 mph","4.5 mph","9 mph"],1],
+          ["Solve: 5/8 = 20/x. What is x?",["25","30","32","40"],2]
+        ],
+        a:[
+          ["If 6 shirts cost $54, what is the unit price per shirt?",["$8","$9","$10","$12"],1],
+          ["Solve the proportion: 2/5 = x/35. What is x?",["12","14","15","10"],1],
+          ["A car travels 180 miles using 6 gallons of gas. What is its unit rate in miles per gallon?",["25","30","35","40"],1],
+          ["Solve: 7/9 = x/54. What is x?",["40","42","44","46"],1],
+          ["If 3 pounds of apples cost $4.50, what is the unit price per pound?",["$1.00","$1.25","$1.50","$2.00"],2],
+          ["Solve: 10/x = 2/5. What is x?",["20","25","30","15"],1]
+        ]},
+      { t:"Fractions & Decimals", o:"Add, subtract, multiply, and divide fractions and decimals, including dividing fractions by fractions.",
+        p:[
+          ["What is 3/4 ÷ 1/2?",["3/8","1 1/2","2 1/4","6"],1],
+          ["What is 2/3 + 1/6?",["3/9","5/6","1/2","1"],1],
+          ["What is 4.5 × 0.2?",["0.9","9","0.09","90"],0],
+          ["What is 7.2 ÷ 0.6?",["1.2","12","120","0.12"],1]
+        ],
+        a:[
+          ["What is 5/6 ÷ 1/3?",["5/18","2 1/2","1 1/2","5/9"],1],
+          ["What is 3/8 + 1/4?",["4/12","5/8","1/2","3/4"],1],
+          ["What is 1 1/2 - 2/3?",["5/6","1/6","1","2/3"],0],
+          ["What is 6.4 × 1.5?",["8.4","9.6","9.0","10.4"],1],
+          ["What is 9.6 ÷ 0.8?",["1.2","12","120","0.12"],1],
+          ["What is 2/5 × 5/6?",["1/3","2/3","10/30","1/2"],0]
+        ]},
+      { t:"Negative Numbers & Absolute Value", o:"Add, subtract, and compare integers, and understand absolute value as distance from zero.",
+        p:[
+          ["What is -5 + 8?",["-13","3","-3","13"],1],
+          ["What is -4 - 6?",["-10","10","2","-2"],0],
+          ["What is |-7|?",["-7","7","0","1/7"],1],
+          ["Which is greater: -3 or -8?",["-3","-8","They are equal","Cannot compare"],0]
+        ],
+        a:[
+          ["What is 6 + (-9)?",["15","-15","3","-3"],3],
+          ["What is -12 - (-5)?",["-7","7","-17","17"],0],
+          ["What is |-15|?",["-15","15","0","1/15"],1],
+          ["Which list is ordered from least to greatest?",["-2, -5, 3, 1","-5, -2, 1, 3","3, 1, -2, -5","1, -2, 3, -5"],1],
+          ["What is -8 + (-3)?",["11","-11","5","-5"],1],
+          ["A submarine is at -120 feet. It rises 45 feet. What is its new position?",["-165 feet","-75 feet","75 feet","165 feet"],1]
+        ]},
+      { t:"Expressions", o:"Write algebraic expressions from word phrases and evaluate expressions by substituting values for variables.",
+        p:[
+          ["Write an expression for “5 more than a number n”:",["5n","n - 5","n + 5","5/n"],2],
+          ["Write an expression for “the product of 7 and a number x”:",["7 + x","7x","x - 7","x/7"],1],
+          ["Evaluate 3x + 4 when x = 5.",["15","19","17","12"],1],
+          ["Evaluate 2(a + 3) when a = 4.",["10","11","14","8"],2]
+        ],
+        a:[
+          ["Write an expression for “a number y decreased by 9”:",["9 - y","y - 9","9y","y + 9"],1],
+          ["Write an expression for “the quotient of a number m and 8”:",["8m","m - 8","m/8","8/m"],2],
+          ["Evaluate 4x - 7 when x = 6.",["17","24","10","31"],0],
+          ["Evaluate 5(b - 2) when b = 7.",["25","35","5","30"],0],
+          ["Write an expression for “3 times a number, increased by 6”:",["3n + 6","3(n + 6)","6n + 3","n + 3 + 6"],0],
+          ["Evaluate 2x² + 1 when x = 3 (x² means x times x).",["19","13","37","7"],0]
+        ]},
+      { t:"Equations & Inequalities", o:"Solve one-variable equations and inequalities and represent solutions on a number line.",
+        p:[
+          ["Solve: x + 7 = 15.",["x = 8","x = 22","x = 7","x = 21"],0],
+          ["Solve: 3x = 21.",["x = 3","x = 7","x = 18","x = 24"],1],
+          ["Solve: x - 5 = 12.",["x = 7","x = 17","x = 60","x = 6"],1],
+          ["Solve the inequality: x + 3 > 10.",["x > 7","x > 13","x < 7","x > 3"],0]
+        ],
+        a:[
+          ["Solve: x/4 = 9.",["x = 13","x = 36","x = 5","x = 2.25"],1],
+          ["Solve: 2x + 5 = 17.",["x = 6","x = 11","x = 5","x = 12"],0],
+          ["Solve: 4x - 3 = 21.",["x = 4.5","x = 6","x = 7","x = 9"],1],
+          ["Solve the inequality: 2x ≤ 16.",["x ≤ 8","x ≤ 32","x ≥ 8","x ≤ 14"],0],
+          ["Solve: x + 9 = 4.",["x = 13","x = -5","x = 5","x = -13"],1],
+          ["Solve the inequality: x - 4 > -2.",["x > 2","x > -6","x < 2","x > 6"],0]
+        ]},
+      { t:"Geometry: Area, Surface Area & Volume", o:"Calculate the area of triangles and quadrilaterals, and the surface area and volume of rectangular prisms.",
+        p:[
+          ["What is the area of a rectangle with length 8 cm and width 5 cm?",["13 cm²","26 cm²","40 cm²","45 cm²"],2],
+          ["What is the area of a triangle with base 10 cm and height 6 cm?",["60 cm²","30 cm²","16 cm²","20 cm²"],1],
+          ["What is the volume of a rectangular prism with length 4 cm, width 3 cm, height 5 cm?",["12 cm³","60 cm³","20 cm³","15 cm³"],1],
+          ["What is the surface area of a cube with side length 3 cm? (Surface area = 6 × side²)",["18 cm²","27 cm²","54 cm²","9 cm²"],2]
+        ],
+        a:[
+          ["What is the area of a rectangle with length 12 m and width 7 m?",["19 m²","84 m²","42 m²","96 m²"],1],
+          ["What is the area of a triangle with base 14 cm and height 8 cm?",["112 cm²","56 cm²","22 cm²","44 cm²"],1],
+          ["What is the volume of a rectangular prism with length 6 in, width 4 in, height 2 in?",["12 in³","24 in³","48 in³","96 in³"],2],
+          ["What is the surface area of a cube with side length 5 cm?",["25 cm²","30 cm²","125 cm²","150 cm²"],3],
+          ["A box has length 10 cm, width 5 cm, and height 4 cm. What is its volume?",["19 cm³","40 cm³","100 cm³","200 cm³"],3],
+          ["What is the area of a triangle with base 9 m and height 4 m?",["36 m²","18 m²","13 m²","26 m²"],1]
+        ]},
+      { t:"Statistics: Center & Data", o:"Calculate mean, median, mode, and range of a data set, and interpret data displays.",
+        p:[
+          ["Find the mean of: 4, 8, 6, 10, 2.",["6","8","5","30"],0],
+          ["Find the median of: 3, 7, 9, 2, 5.",["5","7","9","3"],0],
+          ["Find the mode of: 2, 4, 4, 6, 8, 4.",["2","4","6","8"],1],
+          ["Find the range of: 12, 5, 9, 20, 3.",["8","15","17","20"],2]
+        ],
+        a:[
+          ["Find the mean of: 10, 15, 20, 25, 30.",["15","20","25","100"],1],
+          ["Find the median of: 8, 3, 15, 9, 12.",["8","9","12","15"],1],
+          ["Find the mode of: 5, 7, 7, 9, 11, 7, 5.",["5","7","9","11"],1],
+          ["Find the range of: 44, 12, 30, 8, 25.",["22","36","44","8"],1],
+          ["A data set has mean 20 with 5 values. What do the 5 values sum to?",["4","20","25","100"],3],
+          ["If a data set is 6, 6, 6, 6, 6, what is true about its mean, median, and mode?",["They are all different","They are all equal to 6","Only the mean is 6","Only the mode is 6"],1]
+        ]}
+  ]}}}
+};
+
+const PASS_PCT = 0.8;
+const ATTEMPT_CAP = 20;
+
+/* ---------- Utilities ---------- */
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function topicKey(subj,area,idx){ return subj+"-"+area+"-"+idx; }
+function fmtPct(p){ return Math.round(p*100)+"%"; }
+function fmtDur(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60), s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+function fmtDate(ts){ const d=new Date(ts); return (d.getMonth()+1)+"/"+d.getDate(); }
+function dayKey(ts){ const d=new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
+function defaultProgress(){ return { status:"available", bestPct:0, attempts:[], writingText:"", teacherNote:"", revisionRequested:false }; }
+
+/* ---------- Store (local to this device — no login required) ---------- */
+const LOCAL_KEY = "studyTrailData_v1";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/1n8buDIYzN_x5wGBgC76-CUnqUb6Rr_xhD8S-JqJIZgk/edit";
+let progressData = {};
+let settings = { pin:"1234", saveUrl:"" };
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LOCAL_KEY);
+    if(raw){ const parsed = JSON.parse(raw); progressData = parsed.progress||{}; settings = Object.assign({pin:"1234",saveUrl:""}, parsed.settings||{}); }
+  }catch(e){}
+}
+function saveLocal(){
+  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({progress:progressData, settings})); }catch(e){}
+}
+
+async function initStore(){
+  loadLocal();
+  render();
+}
+
+function getProgress(key){ return progressData[key] || defaultProgress(); }
+
+async function persistProgress(key, data){
+  progressData[key] = data;
+  saveLocal();
+  render();
+}
+
+async function persistSettings(newSettings){
+  settings = Object.assign({}, settings, newSettings);
+  saveLocal();
+  render();
+}
+
+/* ---------- Copy a row for the shared Google Sheet (manual backup) ---------- */
+function sanitizeCell(s){ return String(s==null?"":s).replace(/[\t\r\n]+/g," ").trim(); }
+function rowFields(subj, area, topic, mode, score, minutes, status, notes){
+  const d = new Date();
+  return {
+    date: (d.getMonth()+1)+"/"+d.getDate()+"/"+d.getFullYear(),
+    subject: CURRICULUM[subj].name, area: CURRICULUM[subj].areas[area].name,
+    topic: topic, mode: mode, score: sanitizeCell(score), minutes: minutes,
+    status: status, notes: sanitizeCell(notes)
+  };
+}
+function buildRow(subj, area, topic, mode, score, minutes, status, notes){
+  const f = rowFields(subj, area, topic, mode, score, minutes, status, notes);
+  return [f.date, f.subject, f.area, f.topic, f.mode, f.score, f.minutes, f.status, f.notes].join("\t");
+}
+/* ---------- Automatic save via a Google Apps Script Web App (no login needed) ---------- */
+function sendRowAutomatically(fields, btn){
+  if(!settings.saveUrl){
+    alert('No save link is set up on this device yet. Ask your teacher to set one in the Teacher Dashboard → Settings, or use "Copy Row for Sheet" instead.');
+    return;
+  }
+  const old = btn ? btn.textContent : null;
+  if(btn){ btn.textContent = "Saving…"; btn.disabled = true; }
+  fetch(settings.saveUrl, { method:"POST", mode:"no-cors", body: JSON.stringify(fields) })
+    .then(function(){
+      if(btn){ btn.textContent = "Saved ✓"; }
+    })
+    .catch(function(){
+      if(btn){ btn.textContent = old; btn.disabled = false; }
+      alert("Couldn't reach the save link — check your internet connection, or use \"Copy Row for Sheet\" instead.");
+    });
+}
+function copyText(text, btn){
+  const done = function(){ if(btn){ const old = btn.textContent; btn.textContent="Copied!"; setTimeout(function(){ btn.textContent = old==="Copied!" ? "Copy row for Sheet" : old; },1500); } };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text); done(); });
+  } else { fallbackCopy(text); done(); }
+}
+function fallbackCopy(text){
+  try{
+    const ta = document.createElement("textarea");
+    ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    document.execCommand("copy"); document.body.removeChild(ta);
+  }catch(e){}
+}
+
+
+/* ---------- Curriculum helpers ---------- */
+function getTopics(subj,area){ return CURRICULUM[subj].areas[area].topics; }
+function isUnlocked(subj,area,idx){
+  if(idx===0) return true;
+  const prevKey = topicKey(subj,area,idx-1);
+  return getProgress(prevKey).status === "mastered";
+}
+function subjectAccentVar(subj){ return subj==="la" ? "var(--language)" : "var(--math)"; }
+function subjectProgressPct(subj){
+  let total=0, mastered=0;
+  Object.keys(CURRICULUM[subj].areas).forEach(function(area){
+    getTopics(subj,area).forEach(function(t,idx){
+      total++; if(getProgress(topicKey(subj,area,idx)).status==="mastered") mastered++;
+    });
+  });
+  return total ? Math.round((mastered/total)*100) : 0;
+}
+function allAttempts(){
+  const list=[];
+  Object.keys(progressData).forEach(function(key){
+    (progressData[key].attempts||[]).forEach(function(a){ list.push(Object.assign({key:key}, a)); });
+  });
+  return list;
+}
+function weeklyMinutes(){
+  const days=[]; const now=new Date();
+  for(let i=6;i>=0;i--){ const d=new Date(now); d.setDate(now.getDate()-i); days.push(d); }
+  const byDay = {};
+  allAttempts().forEach(function(a){ const k=dayKey(a.ts); byDay[k]=(byDay[k]||0)+ (a.durationSec||0); });
+  return days.map(function(d){ return { label:["S","M","T","W","T","F","S"][d.getDay()], mins: Math.round((byDay[d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate()]||0)/60) }; });
+}
+function currentStreak(){
+  const now=new Date(); let streak=0;
+  const daysWithActivity = new Set(allAttempts().map(function(a){ return dayKey(a.ts); }));
+  for(let i=0;i<365;i++){
+    const d=new Date(now); d.setDate(now.getDate()-i);
+    const k=d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate();
+    if(daysWithActivity.has(k)) streak++; else break;
+  }
+  return streak;
+}
+
+/* ---------- App state ---------- */
+let state = { screen:"home", subj:null, area:null, idx:null, quiz:null, teacherAuthed:false, expandedSub:null };
+
+function go(screen, extra){ state = Object.assign({screen:screen}, extra||{}); render(); window.scrollTo(0,0); }
+
+/* ---------- Quiz flow ---------- */
+function startQuiz(subj,area,idx,mode){
+  const topic = getTopics(subj,area)[idx];
+  const qs = mode==="practice" ? topic.p : topic.a;
+  state = { screen:"quiz", subj:subj, area:area, idx:idx, quiz:{
+    mode:mode, questions:qs, qi:0, answers:new Array(qs.length).fill(null), picked:null, startTime:Date.now()
+  }};
+  render();
+}
+function pickChoice(ci){
+  if(state.quiz.picked!==null) return;
+  state.quiz.picked = ci;
+  state.quiz.answers[state.quiz.qi] = ci;
+  render();
+}
+function nextQuestion(){
+  const quiz = state.quiz;
+  if(quiz.qi < quiz.questions.length-1){ quiz.qi++; quiz.picked=null; render(); }
+  else finishQuiz();
+}
+function finishQuiz(){
+  const quiz = state.quiz;
+  const durationSec = Math.min(2700,(Date.now()-quiz.startTime)/1000);
+  let correct=0;
+  quiz.questions.forEach(function(q,i){ if(quiz.answers[i]===q[2]) correct++; });
+  const pct = correct/quiz.questions.length;
+  const key = topicKey(state.subj,state.area,state.idx);
+  const prog = Object.assign(defaultProgress(), getProgress(key));
+  const attempts = (prog.attempts||[]).concat([{mode:quiz.mode, correct:correct, total:quiz.questions.length, pct:pct, durationSec:durationSec, ts:Date.now()}]).slice(-ATTEMPT_CAP);
+  const newStatus = quiz.mode==="assessment" ? (pct>=PASS_PCT ? "mastered" : (prog.status==="mastered"?"mastered":"available")) : prog.status;
+  const bestPct = quiz.mode==="assessment" ? Math.max(prog.bestPct||0, pct) : prog.bestPct;
+  state.screen="results"; state.result = {correct:correct,total:quiz.questions.length,pct:pct,mode:quiz.mode,questions:quiz.questions,answers:quiz.answers.slice(),passed:pct>=PASS_PCT,durationSec:durationSec};
+  persistProgress(key, Object.assign({}, prog, {status:newStatus, bestPct:bestPct, attempts:attempts}));
+}
+
+/* ---------- Writing flow ---------- */
+function startWriting(subj,area,idx){
+  state = { screen:"writing", subj:subj, area:area, idx:idx, startTime:Date.now(), checks:[false,false,false,false,false], text:"" };
+  render();
+}
+function submitWriting(){
+  const key = topicKey(state.subj,state.area,state.idx);
+  const prog = Object.assign(defaultProgress(), getProgress(key));
+  const durationSec = Math.min(2700,(Date.now()-state.startTime)/1000);
+  const attempts = (prog.attempts||[]).concat([{mode:"writing", durationSec:durationSec, ts:Date.now()}]).slice(-ATTEMPT_CAP);
+  persistProgress(key, Object.assign({}, prog, {status:"pending_review", writingText:state.text, attempts:attempts, revisionRequested:false}));
+  go("topic", {subj:state.subj, area:state.area, idx:state.idx});
+}
+
+/* ---------- Teacher actions ---------- */
+function teacherDecide(key, decision, note){
+  const prog = Object.assign(defaultProgress(), getProgress(key));
+  if(decision==="approve"){
+    persistProgress(key, Object.assign({}, prog, {status:"mastered", teacherNote:note||""}));
+  } else {
+    persistProgress(key, Object.assign({}, prog, {status:"available", revisionRequested:true, teacherNote:note||""}));
+  }
+}
+function teacherReset(key){
+  persistProgress(key, defaultProgress());
+}
+
+/* ---------- Rendering ---------- */
+function render(){
+  const app = document.getElementById("app");
+  app.innerHTML = topbarHtml() + bodyHtml();
+  wireEvents();
+}
+
+function topbarHtml(){
+  return '<div class="topbar">'
+    + '<div class="brand"><div class="mark">🧭</div><div class="brand-name">Study Trail</div></div>'
+    + '<div class="top-actions">'
+    + '<a class="btn btn-ghost" href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet ↗</a>'
+    + (state.screen==="teacher"
+        ? '<button class="btn" data-act="home">Student View</button>'
+        : '<button class="btn" data-act="teacher-login">Teacher Dashboard</button>')
+    + '</div></div>';
+}
+
+function bodyHtml(){
+  switch(state.screen){
+    case "home": return homeHtml();
+    case "subject": return subjectHtml();
+    case "topic": return subjectHtml(true);
+    case "quiz": return quizHtml();
+    case "results": return resultsHtml();
+    case "writing": return writingHtml();
+    case "teacher-login": return homeHtml() + pinModalHtml();
+    case "teacher": return teacherHtml();
+    default: return homeHtml();
+  }
+}
+
+function homeHtml(){
+  const wk = weeklyMinutes().reduce(function(a,b){return a+b.mins;},0);
+  const streak = currentStreak();
+  let html = '<div class="stat-strip">'
+    + statChip(wk+" min", "This week")
+    + statChip(streak, "Day streak")
+    + statChip(fmtPct(subjectProgressPct("la")/100), "Language Arts")
+    + statChip(fmtPct(subjectProgressPct("math")/100), "Pre-Algebra")
+    + '</div>';
+  html += '<div class="subject-grid">';
+  html += subjectCard("la");
+  html += subjectCard("math");
+  html += '</div>';
+  return html;
+}
+function statChip(num,lbl){ return '<div class="stat-chip"><div class="num mono">'+esc(num)+'</div><div class="lbl">'+esc(lbl)+'</div></div>'; }
+
+function subjectCard(subj){
+  const cur = CURRICULUM[subj];
+  const pct = subjectProgressPct(subj);
+  const cls = subj==="la" ? "la" : "math";
+  let areasHtml = Object.keys(cur.areas).map(function(a){
+    const topics = getTopics(subj,a);
+    const mastered = topics.filter(function(t,i){ return getProgress(topicKey(subj,a,i)).status==="mastered"; }).length;
+    return '<div><b>'+esc(cur.areas[a].name)+':</b> '+mastered+' / '+topics.length+' topics mastered</div>';
+  }).join("");
+  return '<button class="subject-card '+cls+'" data-act="open-subject" data-subj="'+subj+'">'
+    + '<div class="card-top"><div><div class="tag">'+ (subj==="la"?"Language Arts":"Math") +'</div><h2 class="display">'+esc(cur.name)+'</h2></div>'
+    + '<div class="ring" style="--pct:'+pct+'"><span class="mono">'+pct+'%</span></div></div>'
+    + '<div class="areas-list">'+areasHtml+'</div>'
+    + '</button>';
+}
+
+function subjectHtml(){
+  const subj = state.subj;
+  const cur = CURRICULUM[subj];
+  const areaKeys = Object.keys(cur.areas);
+  const area = state.area || areaKeys[0];
+  const topics = getTopics(subj,area);
+  const accent = subjectAccentVar(subj);
+
+  let tabs = areaKeys.map(function(a){
+    return '<button class="area-tab '+(a===area?"active":"")+'" data-act="open-area" data-subj="'+subj+'" data-area="'+a+'">'+esc(cur.areas[a].name)+'</button>';
+  }).join("");
+
+  let nodes = topics.map(function(t,i){
+    const key = topicKey(subj,area,i);
+    const prog = getProgress(key);
+    const unlocked = isUnlocked(subj,area,i);
+    const selected = state.idx===i && state.area===area;
+    let statusCls = prog.status==="mastered" ? "mastered" : (prog.status==="pending_review" ? "pending" : "");
+    let dot = prog.status==="mastered" ? "★" : (prog.status==="pending_review" ? "…" : (unlocked ? (i+1) : "🔒"));
+    return '<div style="position:relative">'
+      + (i<topics.length-1 ? '<div class="connector"></div>' : '')
+      + '<button class="node '+statusCls+' '+(selected?"selected":"")+' '+(unlocked?"":"locked")+'" '
+      + (unlocked ? 'data-act="open-topic" data-subj="'+subj+'" data-area="'+area+'" data-idx="'+i+'"' : 'disabled')
+      + '><div class="dot">'+dot+'</div><div class="info"><b>'+esc(t.t)+'</b><small>'+(prog.status==="mastered"?"Mastered · "+fmtPct(prog.bestPct):prog.status==="pending_review"?"Awaiting review":unlocked?"Ready":"Locked")+'</small></div></button>'
+      + '</div>';
+  }).join("");
+
+  let panel = "";
+  if(state.idx!=null && state.area===area) panel = topicPanelHtml(subj,area,state.idx);
+  else panel = '<div class="topic-panel"><p class="empty-note">Choose a topic on the left to see its objective and start practicing.</p></div>';
+
+  return '<div class="crumbs"><button data-act="home">Subjects</button> / '+esc(cur.name)+'</div>'
+    + '<div class="subject-head"><h1 class="display">'+esc(cur.name)+'</h1></div>'
+    + '<div class="area-tabs">'+tabs+'</div>'
+    + '<div class="trail-layout" style="--accent:'+accent+'">'
+    + '<div class="trail">'+nodes+'</div>'
+    + '<div>'+panel+'</div>'
+    + '</div>';
+}
+
+function topicPanelHtml(subj,area,idx){
+  const topic = getTopics(subj,area)[idx];
+  const key = topicKey(subj,area,idx);
+  const prog = getProgress(key);
+  const accent = subjectAccentVar(subj);
+  let body = '<div class="topic-panel" style="--accent:'+accent+'">';
+  body += '<h2 class="display">'+esc(topic.t)+'</h2>';
+  body += '<div class="objective-box" style="--accent:'+accent+'"><b>Learning objective:</b> '+esc(topic.o)+'</div>';
+
+  if(topic.type==="writing"){
+    if(prog.status==="pending_review"){
+      const lastAttempt = (prog.attempts||[]).slice(-1)[0]||{};
+      const mins = Math.round((lastAttempt.durationSec||0)/60);
+      const fields = rowFields(subj, area, topic.t, "Writing", "—", mins, "Awaiting review", prog.writingText);
+      const row = buildRow(subj, area, topic.t, "Writing", "—", mins, "Awaiting review", prog.writingText);
+      body += '<p class="pill pill-gold">Submitted — waiting for teacher feedback</p>';
+      body += '<div class="submission-text">'+esc(prog.writingText)+'</div>';
+      body += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">'
+        + '<button class="btn btn-primary" data-act="save-row" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save My Paragraph</button>'
+        + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
+        + '</div>';
+      body += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this (her paragraph included) straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> so your teacher can read and grade it.</p>';
+    } else if(prog.status==="mastered"){
+      body += '<p class="pill pill-good">Mastered</p>';
+      if(prog.teacherNote) body += '<div class="note-box"><b>Teacher note:</b> '+esc(prog.teacherNote)+'</div>';
+      body += '<div class="submission-text">'+esc(prog.writingText)+'</div>';
+    } else {
+      if(prog.revisionRequested){
+        body += '<div class="note-box"><b>Your teacher asked for a revision:</b> '+esc(prog.teacherNote||"Please try again.")+'</div>';
+      }
+      body += '<button class="btn btn-primary" data-act="start-writing" data-subj="'+subj+'" data-area="'+area+'" data-idx="'+idx+'">Open Writing Task</button>';
+    }
+  } else {
+    body += '<div class="mode-grid">'
+      + '<div class="mode-card"><h3>Practice</h3><p>Untimed, retry anytime. Answers revealed right away.</p><button class="btn" data-act="start-quiz" data-subj="'+subj+'" data-area="'+area+'" data-idx="'+idx+'" data-mode="practice">Start Practice ('+topic.p.length+' Qs)</button></div>'
+      + '<div class="mode-card"><h3>Assessment</h3><p>Score '+Math.round(PASS_PCT*100)+'%+ to master this topic and unlock the next.</p><button class="btn btn-primary" data-act="start-quiz" data-subj="'+subj+'" data-area="'+area+'" data-idx="'+idx+'" data-mode="assessment">Start Assessment ('+topic.a.length+' Qs)</button></div>'
+      + '</div>';
+    if(prog.bestPct) body += '<p class="pill '+(prog.status==="mastered"?"pill-good":"pill-muted")+'">Best assessment score: '+fmtPct(prog.bestPct)+(prog.status==="mastered"?" — Mastered":"")+'</p>';
+    if(prog.attempts && prog.attempts.length){
+      body += '<div class="history">'+prog.attempts.slice(-5).reverse().map(function(a){
+        return '<div class="history-row"><span>'+esc(a.mode)+' · '+fmtDate(a.ts)+'</span><b>'+(a.mode==="writing"?fmtDur(a.durationSec):a.correct+'/'+a.total+' ('+fmtPct(a.pct)+') · '+fmtDur(a.durationSec))+'</b></div>';
+      }).join("")+'</div>';
+    }
+  }
+  body += '</div>';
+  return body;
+}
+
+function quizHtml(){
+  const quiz = state.quiz;
+  const topic = getTopics(state.subj,state.area)[state.idx];
+  const accent = subjectAccentVar(state.subj);
+  const q = quiz.questions[quiz.qi];
+  const passage = quiz.mode==="practice" ? topic.passageP : topic.passageA;
+  const pctDone = Math.round((quiz.qi)/quiz.questions.length*100);
+  let html = '<div style="--accent:'+accent+'">';
+  html += '<div class="quiz-head"><div><b>'+esc(topic.t)+'</b> <span class="pill pill-muted">'+(quiz.mode==="practice"?"Practice":"Assessment")+'</span></div><div class="mono" style="font-size:13px;color:var(--ink-soft)">Question '+(quiz.qi+1)+' of '+quiz.questions.length+'</div></div>';
+  html += '<div class="progress-track"><div class="progress-fill" style="width:'+pctDone+'%"></div></div>';
+  if(passage) html += '<div class="passage-box"><h4>Passage</h4>'+esc(passage).replace(/\n/g,"<br><br>")+'</div>';
+  html += '<div class="question-text">'+esc(q[0])+'</div>';
+  html += '<div class="choices">'+q[1].map(function(choiceText,ci){
+    let cls = "";
+    if(quiz.mode==="practice" && quiz.picked!==null){
+      if(ci===q[2]) cls="correct";
+      else if(ci===quiz.picked) cls="incorrect";
+    } else if(quiz.picked===ci){ cls="picked-neutral"; }
+    return '<button class="choice '+cls+'" '+(quiz.picked!==null && quiz.mode==="practice" ? "disabled" : "")+' data-act="pick" data-ci="'+ci+'"><span class="letter">'+"ABCD"[ci]+'</span>'+esc(choiceText)+'</button>';
+  }).join("")+'</div>';
+  html += '<div class="quiz-footer"><button class="btn btn-ghost" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Exit</button>';
+  if(quiz.mode==="assessment"){
+    html += '<button class="btn btn-primary" data-act="next-q" '+(quiz.picked===null?"disabled":"")+'>'+(quiz.qi<quiz.questions.length-1?"Next":"Submit Assessment")+'</button>';
+  } else {
+    html += '<button class="btn btn-primary" data-act="next-q" '+(quiz.picked===null?"disabled":"")+'>'+(quiz.qi<quiz.questions.length-1?"Continue":"Finish Practice")+'</button>';
+  }
+  html += '</div></div>';
+  return html;
+}
+
+function resultsHtml(){
+  const r = state.result;
+  const topic = getTopics(state.subj,state.area)[state.idx];
+  const accent = subjectAccentVar(state.subj);
+  const minutes = Math.round((r.durationSec||0)/60);
+  let html = '<div style="--accent:'+accent+'">';
+  html += '<div class="result-banner '+(r.passed?"pass":"fail")+'"><div class="score mono">'+r.correct+'/'+r.total+'</div><div><b>'+(r.mode==="assessment"?(r.passed?"Topic mastered! 🎉 Next topic unlocked.":"Not quite — "+Math.round(PASS_PCT*100)+"% needed to master this topic."):"Practice complete.")+'</b><div style="color:var(--ink-soft);font-size:13px">Score: '+fmtPct(r.pct)+'</div></div></div>';
+  html += '<h3 style="margin-top:4px">Review answers</h3>';
+  html += r.questions.map(function(q,i){
+    const right = r.answers[i]===q[2];
+    return '<div class="review-item '+(right?"right":"wrong")+'"><div class="q">'+esc(q[0])+'</div><div class="ans">Your answer: '+esc(q[1][r.answers[i]]!=null?q[1][r.answers[i]]:"—")+(right?"":" · Correct answer: "+esc(q[1][q[2]]))+'</div></div>';
+  }).join("");
+  const scoreLabel = r.correct+"/"+r.total+" ("+fmtPct(r.pct)+")";
+  const statusLabel = r.mode==="assessment"?(r.passed?"Mastered":"Not yet"):"—";
+  const fields = rowFields(state.subj, state.area, topic.t, r.mode==="practice"?"Practice":"Assessment", scoreLabel, minutes, statusLabel, "");
+  const row = buildRow(state.subj, state.area, topic.t, r.mode==="practice"?"Practice":"Assessment", scoreLabel, minutes, statusLabel, "");
+  html += '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'
+    + '<button class="btn btn-primary" data-act="save-row" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save My Results</button>'
+    + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
+    + '<button class="btn btn-ghost" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Back to Topic</button>'
+    + '</div>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> — no copying needed.</p>';
+  html += '</div>';
+  return html;
+}
+
+function writingHtml(){
+  const topic = getTopics(state.subj,state.area)[state.idx];
+  const accent = subjectAccentVar(state.subj);
+  const allChecked = state.checks.every(Boolean);
+  const longEnough = state.text.trim().length > 40;
+  let html = '<div class="topic-panel" style="--accent:'+accent+'">';
+  html += '<h2 class="display">'+esc(topic.t)+'</h2>';
+  html += '<div class="objective-box"><b>Prompt:</b> '+esc(topic.prompt)+'</div>';
+  html += '<textarea id="writingText" placeholder="Write your paragraph here...">'+esc(state.text)+'</textarea>';
+  html += '<div class="char-count">'+state.text.trim().length+' characters</div>';
+  html += '<div class="rubric-list">'+topic.rubric.map(function(item,i){
+    return '<label class="rubric-item"><input type="checkbox" data-act="check" data-i="'+i+'" '+(state.checks[i]?"checked":"")+'> '+esc(item)+'</label>';
+  }).join("")+'</div>';
+  html += '<div class="quiz-footer"><button class="btn btn-ghost" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Cancel</button>'
+    + '<button class="btn btn-primary" data-act="submit-writing" '+((allChecked && longEnough)?"":"disabled")+'>Submit for Review</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function pinModalHtml(){
+  return '<div class="modal-back" data-act="close-modal"><div class="modal" onclick="event.stopPropagation()">'
+    + '<h3 class="display" style="margin-top:0">Teacher Dashboard</h3>'
+    + '<p style="font-size:13.5px;color:var(--ink-soft);margin:0">Enter the teacher PIN to view progress and grade writing tasks.</p>'
+    + '<input type="password" id="pinInput" placeholder="PIN" inputmode="numeric">'
+    + '<div id="pinError" style="color:var(--bad);font-size:12.5px;min-height:16px"></div>'
+    + '<div class="modal-actions"><button class="btn" data-act="close-modal">Cancel</button><button class="btn btn-primary" data-act="pin-submit">Enter</button></div>'
+    + '</div></div>';
+}
+
+function teacherHtml(){
+  const wk = weeklyMinutes();
+  const maxMin = Math.max(1, Math.max.apply(null, wk.map(function(d){return d.mins;})));
+  let html = '<div class="crumbs"><button data-act="home">Student View</button> / Teacher Dashboard</div>';
+  html += '<h1 class="display" style="margin-top:0">Teacher Dashboard</h1>';
+
+  html += '<div class="teacher-grid">'
+    + statChip(currentStreak(), "Day streak")
+    + statChip(wk.reduce(function(a,b){return a+b.mins;},0)+" min", "Last 7 days")
+    + statChip(fmtPct(subjectProgressPct("la")/100), "Language Arts done")
+    + statChip(fmtPct(subjectProgressPct("math")/100), "Pre-Algebra done")
+    + '</div>';
+
+  html += '<div class="chart-card"><h3 style="margin:0 0 4px">Practice time, last 7 days</h3>'
+    + '<div class="bars">'+wk.map(function(d){
+      const h = Math.round((d.mins/maxMin)*90)+6;
+      return '<div class="bar-col"><div class="v mono">'+d.mins+'</div><div class="bar" style="height:'+h+'px" title="'+d.mins+' minutes"></div><div class="d">'+d.label+'</div></div>';
+    }).join("")+'</div></div>';
+
+  ["la","math"].forEach(function(subj){
+    const cur = CURRICULUM[subj];
+    html += '<div class="section-title">'+esc(cur.name)+'</div>';
+    Object.keys(cur.areas).forEach(function(area){
+      html += '<div style="margin-bottom:18px"><b style="font-size:14px">'+esc(cur.areas[area].name)+'</b><div class="overflow-x"><table class="tt"><thead><tr><th>Topic</th><th>Status</th><th>Best score</th><th>Attempts</th><th>Last activity</th><th></th></tr></thead><tbody>';
+      getTopics(subj,area).forEach(function(t,i){
+        const key = topicKey(subj,area,i);
+        const prog = getProgress(key);
+        const unlocked = isUnlocked(subj,area,i);
+        const statusPill = prog.status==="mastered" ? '<span class="pill pill-good">Mastered</span>' : prog.status==="pending_review" ? '<span class="pill pill-gold">Needs review</span>' : unlocked ? '<span class="pill pill-muted">In progress</span>' : '<span class="pill pill-muted">Locked</span>';
+        const last = (prog.attempts&&prog.attempts.length) ? fmtDate(prog.attempts[prog.attempts.length-1].ts) : "—";
+        html += '<tr><td>'+esc(t.t)+'</td><td>'+statusPill+'</td><td class="mono">'+(prog.bestPct?fmtPct(prog.bestPct):"—")+'</td><td class="mono">'+(prog.attempts?prog.attempts.length:0)+'</td><td class="mono">'+last+'</td><td><button class="btn btn-sm" data-act="teacher-reset" data-key="'+key+'">Reset</button></td></tr>';
+      });
+      html += '</tbody></table></div></div>';
+    });
+  });
+
+  const pending = Object.keys(progressData).filter(function(k){ return progressData[k].status==="pending_review"; });
+  html += '<div class="section-title">Writing submissions awaiting review</div>';
+  if(!pending.length) html += '<p class="empty-note">Nothing waiting for review right now.</p>';
+  pending.forEach(function(key){
+    const prog = progressData[key];
+    const parts = key.split("-");
+    const topic = getTopics(parts[0],parts[1])[Number(parts[2])];
+    html += '<div class="submission-card"><b>'+esc(topic.t)+'</b> <span style="color:var(--ink-soft);font-size:12.5px">'+esc(CURRICULUM[parts[0]].name)+'</span>'
+      + '<div class="submission-text">'+esc(prog.writingText)+'</div>'
+      + '<textarea id="note-'+key+'" placeholder="Feedback note (optional)" style="min-height:60px">'+esc(prog.teacherNote||"")+'</textarea>'
+      + '<div class="modal-actions" style="justify-content:flex-start;margin-top:8px">'
+      + '<button class="btn btn-primary" data-act="teacher-decide" data-key="'+key+'" data-decision="approve">Approve — Mastered</button>'
+      + '<button class="btn" data-act="teacher-decide" data-key="'+key+'" data-decision="revise">Ask for Revision</button>'
+      + '</div></div>';
+  });
+
+  html += '<div class="section-title">Settings</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    + '<button class="btn" data-act="change-pin">Change Teacher PIN</button>'
+    + '<button class="btn" data-act="set-save-url">'+(settings.saveUrl?"Update Save Link":"Set Up Automatic Saving")+'</button>'
+    + '</div>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:10px">'
+    + (settings.saveUrl
+        ? 'Automatic saving is set up on <em>this device</em>. Set the same link on Claire\'s device (in her Teacher Dashboard → Settings) so her "Save My Results" button works too.'
+        : 'Once you deploy the Google Apps Script (see setup instructions) and paste its Web App URL here, "Save My Results" will write straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> — no copying needed. Set the same link on Claire\'s device too.')
+    + ' The Progress Sheet and "Copy Row" buttons always work as a manual backup.</p>';
+  return html;
+}
+
+/* ---------- Event wiring ---------- */
+function wireEvents(){
+  document.querySelectorAll("[data-act]").forEach(function(el){
+    el.addEventListener("click", function(ev){
+      const act = el.getAttribute("data-act");
+      if(act==="home") go("home");
+      else if(act==="open-subject") go("subject",{subj:el.dataset.subj, area:null, idx:null});
+      else if(act==="open-area") go("subject",{subj:el.dataset.subj, area:el.dataset.area, idx:null});
+      else if(act==="open-topic") go("topic",{subj:el.dataset.subj, area:el.dataset.area, idx:Number(el.dataset.idx)});
+      else if(act==="start-quiz") startQuiz(el.dataset.subj, el.dataset.area, Number(el.dataset.idx), el.dataset.mode);
+      else if(act==="start-writing") startWriting(el.dataset.subj, el.dataset.area, Number(el.dataset.idx));
+      else if(act==="pick") pickChoice(Number(el.dataset.ci));
+      else if(act==="next-q") nextQuestion();
+      else if(act==="submit-writing") submitWriting();
+      else if(act==="check"){ state.checks[Number(el.dataset.i)] = !state.checks[Number(el.dataset.i)]; render(); }
+      else if(act==="copy-row" || act==="copy-summary"){ copyText(el.dataset.row, el); }
+      else if(act==="save-row"){
+        try{ sendRowAutomatically(JSON.parse(el.dataset.fields), el); }catch(e){}
+      }
+      else if(act==="teacher-login") go("teacher-login",{subj:state.subj,area:state.area,idx:state.idx});
+      else if(act==="close-modal") go("home");
+      else if(act==="pin-submit"){
+        const val = document.getElementById("pinInput").value;
+        if(val === (settings.pin||"1234")){ state.teacherAuthed = true; go("teacher"); }
+        else { document.getElementById("pinError").textContent = "Incorrect PIN. Try again."; }
+      }
+      else if(act==="teacher-decide"){
+        const note = document.getElementById("note-"+el.dataset.key).value;
+        teacherDecide(el.dataset.key, el.dataset.decision, note);
+      }
+      else if(act==="teacher-reset"){
+        if(confirm("Reset this topic's progress? This clears its status and history.")) teacherReset(el.dataset.key);
+      }
+      else if(act==="change-pin"){
+        const np = prompt("Enter a new teacher PIN (numbers only):");
+        if(np && /^[0-9]{3,8}$/.test(np)) persistSettings({pin:np});
+        else if(np) alert("PIN must be 3-8 digits.");
+      }
+      else if(act==="set-save-url"){
+        const nu = prompt("Paste the Google Apps Script Web App URL (ends in /exec):", settings.saveUrl||"");
+        if(nu===null) return;
+        if(nu==="" || /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(nu.trim())) persistSettings({saveUrl:nu.trim()});
+        else alert("That doesn't look like an Apps Script Web App URL. It should look like:\nhttps://script.google.com/macros/s/AKfycbx.../exec");
+      }
+    });
+  });
+  const ta = document.getElementById("writingText");
+  if(ta){ ta.addEventListener("input", function(){ state.text = ta.value; const cc=document.querySelector(".char-count"); if(cc) cc.textContent = state.text.trim().length+" characters"; document.querySelector('[data-act="submit-writing"]').disabled = !(state.checks.every(Boolean) && state.text.trim().length>40); }); }
+}
+
+initStore();
+})();
+</script>
+</body>
+</html>
