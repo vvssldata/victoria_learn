@@ -593,14 +593,15 @@ function defaultProgress(){ return { status:"available", bestPct:0, attempts:[],
 
 /* ---------- Store (local to this device — no login required) ---------- */
 const LOCAL_KEY = "studyTrailData_v1";
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1n8buDIYzN_x5wGBgC76-CUnqUb6Rr_xhD8S-JqJIZgk/edit";
+const SHEET_URL = "https://docs.google.com/spreadsheets/d/108lb9t9XYv_IjsjPfoQp-PUAIjU5H8dhEm9Xp2Y-er8/edit";
+const SAVE_URL = "https://script.google.com/macros/s/AKfycbzzszdX1hmcaa735PmAHvUFjFrYrA6vYaqbcawb_ALtgqwmq3jeZM44vny0syTCL5u5/exec";
 let progressData = {};
-let settings = { pin:"1234", saveUrl:"" };
+let settings = { pin:"1234" };
 
 function loadLocal(){
   try{
     const raw = localStorage.getItem(LOCAL_KEY);
-    if(raw){ const parsed = JSON.parse(raw); progressData = parsed.progress||{}; settings = Object.assign({pin:"1234",saveUrl:""}, parsed.settings||{}); }
+    if(raw){ const parsed = JSON.parse(raw); progressData = parsed.progress||{}; settings = Object.assign({pin:"1234"}, parsed.settings||{}); }
   }catch(e){}
 }
 function saveLocal(){
@@ -643,13 +644,9 @@ function buildRow(subj, area, topic, mode, score, minutes, status, notes){
 }
 /* ---------- Automatic save via a Google Apps Script Web App (no login needed) ---------- */
 function sendRowAutomatically(fields, btn){
-  if(!settings.saveUrl){
-    alert('No save link is set up on this device yet. Ask your teacher to set one in the Teacher Dashboard → Settings, or use "Copy Row for Sheet" instead.');
-    return;
-  }
   const old = btn ? btn.textContent : null;
   if(btn){ btn.textContent = "Saving…"; btn.disabled = true; }
-  fetch(settings.saveUrl, { method:"POST", mode:"no-cors", body: JSON.stringify(fields) })
+  fetch(SAVE_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(fields) })
     .then(function(){
       if(btn){ btn.textContent = "Saved ✓"; }
     })
@@ -1074,15 +1071,8 @@ function teacherHtml(){
   });
 
   html += '<div class="section-title">Settings</div>';
-  html += '<div style="display:flex;gap:8px;flex-wrap:wrap">'
-    + '<button class="btn" data-act="change-pin">Change Teacher PIN</button>'
-    + '<button class="btn" data-act="set-save-url">'+(settings.saveUrl?"Update Save Link":"Set Up Automatic Saving")+'</button>'
-    + '</div>';
-  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:10px">'
-    + (settings.saveUrl
-        ? 'Automatic saving is set up on <em>this device</em>. Set the same link on Claire\'s device (in her Teacher Dashboard → Settings) so her "Save My Results" button works too.'
-        : 'Once you deploy the Google Apps Script (see setup instructions) and paste its Web App URL here, "Save My Results" will write straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> — no copying needed. Set the same link on Claire\'s device too.')
-    + ' The Progress Sheet and "Copy Row" buttons always work as a manual backup.</p>';
+  html += '<button class="btn" data-act="change-pin">Change Teacher PIN</button>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:10px">"Save My Results" writes straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> automatically — this works out of the box on any device, no setup needed. The "Copy Row" button remains as a manual backup if the save link is ever unreachable.</p>';
   return html;
 }
 
@@ -1123,12 +1113,6 @@ function wireEvents(){
         const np = prompt("Enter a new teacher PIN (numbers only):");
         if(np && /^[0-9]{3,8}$/.test(np)) persistSettings({pin:np});
         else if(np) alert("PIN must be 3-8 digits.");
-      }
-      else if(act==="set-save-url"){
-        const nu = prompt("Paste the Google Apps Script Web App URL (ends in /exec):", settings.saveUrl||"");
-        if(nu===null) return;
-        if(nu==="" || /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(nu.trim())) persistSettings({saveUrl:nu.trim()});
-        else alert("That doesn't look like an Apps Script Web App URL. It should look like:\nhttps://script.google.com/macros/s/AKfycbx.../exec");
       }
     });
   });
