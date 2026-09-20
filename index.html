@@ -780,9 +780,10 @@ function startQuiz(subj,area,idx,mode){
   render();
 }
 function pickChoice(ci){
-  if(state.quiz.picked!==null) return;
-  state.quiz.picked = ci;
-  state.quiz.answers[state.quiz.qi] = ci;
+  const quiz = state.quiz;
+  if(quiz.mode==="practice" && quiz.picked!==null) return; // practice reveals right/wrong immediately, so the answer locks in
+  quiz.picked = ci; // assessment: free to change your pick until you hit Next/Submit
+  quiz.answers[quiz.qi] = ci;
   render();
 }
 function nextQuestion(){
@@ -1003,7 +1004,7 @@ function quizHtml(){
       if(ci===q[2]) cls="correct";
       else if(ci===quiz.picked) cls="incorrect";
     } else if(quiz.picked===ci){ cls="picked-neutral"; }
-    return '<button class="choice '+cls+'" '+(quiz.picked!==null ? "disabled" : "")+' data-act="pick" data-ci="'+ci+'"><span class="letter">'+"ABCD"[ci]+'</span>'+esc(choiceText)+'</button>';
+    return '<button class="choice '+cls+'" '+(quiz.mode==="practice" && quiz.picked!==null ? "disabled" : "")+' data-act="pick" data-ci="'+ci+'"><span class="letter">'+"ABCD"[ci]+'</span>'+esc(choiceText)+'</button>';
   }).join("")+'</div>';
   html += '<div class="quiz-footer"><button class="btn btn-ghost" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Exit</button>';
   if(quiz.mode==="assessment"){
