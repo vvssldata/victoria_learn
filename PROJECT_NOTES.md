@@ -79,6 +79,47 @@ As of this snapshot, 25 of 28 topics are mastered (all of Language Arts;
 8 original Pre-Algebra topics). The 3 new Kumon-sourced Pre-Algebra topics
 and the "Writing Task: Take a Stand" writing exercise are not yet attempted.
 
+This snapshot is stale as of 2026-09-27 — a lot has been added since (7 SAT
+vocabulary batches, more Kumon sessions, long division / decimal topics, a
+"Log Activity" journal feature, and a standalone 6th Grade Math Test — see
+below). Check the actual CURRICULUM/topic list in `index.html` rather than
+trusting the topic counts stated earlier in this file.
+
+## Features added after this file was last fully updated
+
+**Log Activity** (topbar button): a form for logging time on
+non-curriculum activities (Math/Reading/Music/Golf/Vocabulary/Chinese/
+Chore/Other) — subject, date, start/end time (duration auto-computed),
+intensity (100% down to 10%, default 100%), and free-text details.
+Saves straight to the Progress Sheet using the same 9-column row shape as
+quiz results (no Apps Script changes needed): intensity goes in the Score
+column, *effective* time (duration × intensity) goes in Minutes, raw
+duration stays visible in the Topic field alongside the time range.
+
+**Auto-save on every practice/assessment** (no button click): originally
+results only reached the sheet if the student clicked "Save My Results",
+which the user found meant only 100%-score attempts tended to get saved.
+`finishQuiz()` now posts to the Apps Script automatically the instant a
+quiz finishes, regardless of score. The old manual button was replaced
+with a live status line; "Copy Row instead" remains as a manual fallback.
+
+**6th Grade Math Test** (topbar button, Victoria-only): a standalone
+30-question, 60-minute timed test, separate from the topic trail —
+10 categories × 3 fresh questions (Ratios & Rates, Fractions & Decimals,
+Negative Numbers, Exponents & Powers, Expressions, Equations &
+Inequalities, Geometry, Statistics, Long Division, Decimal Operations).
+Real-test conditions (no immediate feedback, live countdown, auto-submits
+at zero). On submission, auto-saves 11 rows to the sheet (one per
+category + one OVERALL row, area: "6th Grade Math Test", mode: "Test").
+The question bank (`MATH_TEST_6TH`) is a separate flat array, not part of
+`CURRICULUM` — the generic `rebalance_choices.js` script does NOT shuffle
+it; use `rebalance_mathtest.js` (in the scratchpad from that session) if
+more questions are added later.
+
+All three were verified with jsdom-driven tests (real DOM, mocked
+`fetch`) before pushing, not just a syntax check — see conversation
+history for the specific test scripts if extending this further.
+
 ## Commit history for this work
 
 - `261fc72` Add Study Trail practice app
@@ -87,3 +128,9 @@ and the "Writing Task: Take a Stand" writing exercise are not yet attempted.
 - `24dfe95` Add pre-algebra topics sourced from Kumon Level G
 - `6dedccf` Label new Pre-Algebra topics with their Kumon source pages
 - `734a9f7` Seed first-load progress from the Google Sheet activity log
+- ... (many content batches in between — SAT vocab, Kumon sessions,
+  decimal/long-division topics — see `git log` for the full list)
+- `3d0896b` Add "Log Activity" feature
+- `12d4dd4` Add intensity to the Activity Log
+- `82cbf30` Auto-save every practice/assessment result automatically
+- `f47194b` Add the 1-hour 6th Grade Math Test with per-topic scoring
