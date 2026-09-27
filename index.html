@@ -1213,18 +1213,18 @@ function currentStreak(){
 let state = { screen:"home", subj:null, area:null, idx:null, quiz:null, teacherAuthed:false, expandedSub:null };
 let activityDraft = null;
 function openActivityLog(){
-  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"" }; }
+  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"", intensity:100 }; }
   go("activity");
 }
-function buildActivityFields(d, durationMin){
+function buildActivityFields(d, durationMin, effectiveMin){
   return {
     date: isoToMDY(d.date), subject: d.subject, area: "Activity Log",
-    topic: fmt12h(d.start)+" – "+fmt12h(d.end), mode: "Activity",
-    score: "", minutes: durationMin, status: "Logged", notes: sanitizeCell(d.details)
+    topic: fmt12h(d.start)+" – "+fmt12h(d.end)+" ("+fmtDurationLong(durationMin)+")", mode: "Activity",
+    score: d.intensity+"%", minutes: effectiveMin, status: "Logged", notes: sanitizeCell(d.details)
   };
 }
-function buildActivityRow(d, durationMin){
-  const f = buildActivityFields(d, durationMin);
+function buildActivityRow(d, durationMin, effectiveMin){
+  const f = buildActivityFields(d, durationMin, effectiveMin);
   return [f.date, f.subject, f.area, f.topic, f.mode, f.score, f.minutes, f.status, f.notes].join("\t");
 }
 
@@ -1327,12 +1327,14 @@ function bodyHtml(){
   }
 }
 
+const INTENSITY_LEVELS = [100,90,80,70,60,50,40,30,20,10];
 function activityLogHtml(){
-  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"" }; }
+  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"", intensity:100 }; }
   const d = activityDraft;
   const startMin = timeToMinutes(d.start), endMin = timeToMinutes(d.end);
   const validTimes = startMin!=null && endMin!=null && endMin>startMin;
   const durationMin = validTimes ? (endMin-startMin) : null;
+  const effectiveMin = durationMin!=null ? Math.round(durationMin * d.intensity/100) : null;
   let html = '<div class="crumbs"><button data-act="home">Home</button> / Log Activity</div>';
   html += '<div class="topic-panel">';
   html += '<h2 class="display">Log an Activity</h2>';
@@ -1345,22 +1347,25 @@ function activityLogHtml(){
     + '<div class="field" style="flex:1"><label>Start Time</label><input id="actStart" type="time" value="'+esc(d.start)+'"></div>'
     + '<div class="field" style="flex:1"><label>End Time</label><input id="actEnd" type="time" value="'+esc(d.end)+'"></div>'
     + '</div>';
+  html += '<div class="field"><label>Intensity</label><select id="actIntensity">'
+    + INTENSITY_LEVELS.map(function(v){ return '<option value="'+v+'" '+(v===d.intensity?"selected":"")+'>'+v+'%</option>'; }).join("")
+    + '</select></div>';
   if(d.start && d.end){
     html += validTimes
-      ? '<p class="pill pill-good">Duration: '+fmtDurationLong(durationMin)+'</p>'
+      ? '<p class="pill pill-good">Duration: '+fmtDurationLong(durationMin)+(d.intensity<100 ? ' · Effective ('+d.intensity+'%): '+fmtDurationLong(effectiveMin) : '')+'</p>'
       : '<p class="pill pill-bad">End time must be after start time.</p>';
   }
   html += '<div class="field"><label>What did you work on?</label><textarea id="actDetails" placeholder="e.g. Practiced scales and worked on a new song with the teacher.">'+esc(d.details)+'</textarea></div>';
-  html += '<div id="actSaveWrap" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px">'+activitySaveButtonsHtml(d, durationMin)+'</div>';
-  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a>.</p>';
+  html += '<div id="actSaveWrap" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px">'+activitySaveButtonsHtml(d, durationMin, effectiveMin)+'</div>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> — intensity is logged in the Score column, effective time (duration × intensity) in Minutes.</p>';
   html += '</div>';
   return html;
 }
-function activitySaveButtonsHtml(d, durationMin){
+function activitySaveButtonsHtml(d, durationMin, effectiveMin){
   const canSave = durationMin!=null && d.details.trim().length>0;
   if(!canSave) return '<p style="font-size:12.5px;color:var(--ink-soft)">Fill in the start time, end time, and a short description to save.</p>';
-  const fields = buildActivityFields(d, durationMin);
-  const row = buildActivityRow(d, durationMin);
+  const fields = buildActivityFields(d, durationMin, effectiveMin);
+  const row = buildActivityRow(d, durationMin, effectiveMin);
   return '<button class="btn btn-primary" data-act="save-activity" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save Activity Log</button>'
     + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
     + '<button class="btn btn-ghost" data-act="clear-activity">Log Another</button>';
@@ -1689,14 +1694,17 @@ function wireEvents(){
   if(actStart) actStart.addEventListener("change", function(){ activityDraft.start = actStart.value; render(); });
   const actEnd = document.getElementById("actEnd");
   if(actEnd) actEnd.addEventListener("change", function(){ activityDraft.end = actEnd.value; render(); });
+  const actIntensity = document.getElementById("actIntensity");
+  if(actIntensity) actIntensity.addEventListener("change", function(){ activityDraft.intensity = Number(actIntensity.value); render(); });
   const actDetails = document.getElementById("actDetails");
   if(actDetails){
     actDetails.addEventListener("input", function(){
       activityDraft.details = actDetails.value;
       const startMin = timeToMinutes(activityDraft.start), endMin = timeToMinutes(activityDraft.end);
       const durationMin = (startMin!=null && endMin!=null && endMin>startMin) ? (endMin-startMin) : null;
+      const effectiveMin = durationMin!=null ? Math.round(durationMin * activityDraft.intensity/100) : null;
       const wrap = document.getElementById("actSaveWrap");
-      if(wrap){ wrap.innerHTML = activitySaveButtonsHtml(activityDraft, durationMin); bindClicks(wrap); }
+      if(wrap){ wrap.innerHTML = activitySaveButtonsHtml(activityDraft, durationMin, effectiveMin); bindClicks(wrap); }
     });
   }
 }
