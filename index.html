@@ -1067,6 +1067,42 @@ const PASS_PCT = 0.8;
 const ATTEMPT_CAP = 20;
 const ACTIVITY_SUBJECTS = ["Math","Reading","Music","Golf","Vocabulary","Chinese","Chore","Other"];
 
+/* ---------- 6th Grade Math Test: 30 questions across 10 categories, ~60 minutes ----------
+   Fresh problems (not reused from the practice/assessment banks), one flat array with a
+   category tag per question so results can be scored and saved per category. */
+const MATH_TEST_6TH = [
+  {cat:"Ratios & Rates", q:"A basket has 18 apples and 24 oranges. What is the ratio of apples to oranges in simplest form?", choices:["2:3","3:4","4:3","6:8"], correct:1},
+  {cat:"Ratios & Rates", q:"A car travels 245 miles in 5 hours. What is its rate in miles per hour?", choices:["42 mph","50 mph","49 mph","45 mph"], correct:2},
+  {cat:"Ratios & Rates", q:"A recipe uses a ratio of 4 cups flour to 3 cups sugar. If you use 15 cups of sugar, how many cups of flour do you need?", choices:["12","16","20","18"], correct:2},
+  {cat:"Fractions & Decimals", q:"What is 2/3 + 5/6?", choices:["1 1/2","1 1/3","1 1/6","2/3"], correct:0},
+  {cat:"Fractions & Decimals", q:"What is 7/8 ÷ 1/4?", choices:["1 3/4","3 1/2","3 1/4","7/32"], correct:1},
+  {cat:"Fractions & Decimals", q:"What is 5.6 − 2.75?", choices:["2.15","2.85","3.85","2.95"], correct:1},
+  {cat:"Negative Numbers", q:"What is -8 + 15?", choices:["-23","-7","7","23"], correct:2},
+  {cat:"Negative Numbers", q:"What is -6 × (-4)?", choices:["-10","-24","10","24"], correct:3},
+  {cat:"Negative Numbers", q:"What is |-14| - |-9|?", choices:["5","-23","23","-5"], correct:0},
+  {cat:"Exponents & Powers", q:"What is (-3)⁴?", choices:["12","81","-12","-81"], correct:1},
+  {cat:"Exponents & Powers", q:"What is 2⁵ ÷ 2²?", choices:["8","16","10","2"], correct:0},
+  {cat:"Exponents & Powers", q:"What is -(-2)⁵?", choices:["-32","32","10","-10"], correct:1},
+  {cat:"Expressions", q:"Write an expression for “twice a number, decreased by 7.”", choices:["2(n-7)","7 - 2n","n - 7×2","2n - 7"], correct:3},
+  {cat:"Expressions", q:"Evaluate 4x - 3 when x = 6.", choices:["21","27","18","15"], correct:0},
+  {cat:"Expressions", q:"Evaluate 3(a + 5) when a = 2.", choices:["11","21","36","16"], correct:1},
+  {cat:"Equations & Inequalities", q:"Solve: 5x - 3 = 22.", choices:["6","5","4","8"], correct:1},
+  {cat:"Equations & Inequalities", q:"Solve: x/4 + 2 = 9.", choices:["32","36","28","24"], correct:2},
+  {cat:"Equations & Inequalities", q:"Solve the inequality: 3x + 1 < 16.", choices:["x > 5","x < 6","x < 5","x < 15"], correct:2},
+  {cat:"Geometry", q:"What is the area of a triangle with base 14 cm and height 9 cm?", choices:["63 cm²","23 cm²","126 cm²","31.5 cm²"], correct:0},
+  {cat:"Geometry", q:"What is the volume of a rectangular prism 6 in × 5 in × 4 in?", choices:["15 in³","24 in³","120 in³","30 in³"], correct:2},
+  {cat:"Geometry", q:"A cube has a side length of 4 cm. What is its surface area? (SA = 6 × side²)", choices:["24 cm²","96 cm²","64 cm²","16 cm²"], correct:1},
+  {cat:"Statistics", q:"Find the mean of: 8, 12, 10, 14, 6.", choices:["12","9","11","10"], correct:3},
+  {cat:"Statistics", q:"Find the median of: 3, 17, 9, 5, 11.", choices:["9","8","5","11"], correct:0},
+  {cat:"Statistics", q:"Find the range of: 22, 8, 15, 30, 4.", choices:["18","30","22","26"], correct:3},
+  {cat:"Long Division", q:"4368 ÷ 24 = ?", choices:["183 R 0","182 R 0","172 R 0","182 R 24"], correct:1},
+  {cat:"Long Division", q:"5187 ÷ 17 = ?", choices:["315 R 2","305 R 15","305 R 2","304 R 2"], correct:2},
+  {cat:"Long Division", q:"24072 ÷ 12 = ?", choices:["2060","2006","206","2600"], correct:1},
+  {cat:"Decimal Operations", q:"What is 14.6 × 3.5?", choices:["5.11","51.1","511","5110"], correct:1},
+  {cat:"Decimal Operations", q:"What is 312.5 ÷ 12.5?", choices:["25","2.5","250","0.25"], correct:0},
+  {cat:"Decimal Operations", q:"What is 84.24 ÷ 6?", choices:["14.4","140.4","14.04","1.404"], correct:2}
+];
+
 /* ---------- Progress snapshot reconstructed from the Google Sheet log (docs.google.com/spreadsheets/d/120T9AJJTgE9pzX21jtseQQj1PO733ubD_MxHDZVJ86o) as of 2026-09-20.
    Used only to seed a browser that has no local progress yet (e.g. a new device) — never overwrites existing local progress. */
 const SHEET_PROGRESS_SEED = {"la-vocab-0":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789401600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789401600000},{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789660800000}]},"math-prealg-2":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000}]},"math-prealg-3":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":120,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789660800000}]},"math-prealg-4":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789660800000}]},"math-prealg-5":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789660800000}]},"math-prealg-6":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789660800000}]},"math-prealg-7":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789660800000}]},"la-vocab-1":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789660800000}]},"la-vocab-2":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789660800000}]},"la-vocab-3":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000}]},"la-vocab-4":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789660800000}]},"la-vocab-5":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789660800000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":180,"ts":1789833600000}]},"la-reading-0":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789833600000}]},"la-reading-1":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789833600000}]},"la-reading-2":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789833600000}]},"la-reading-3":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789833600000}]},"la-reading-4":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":180,"ts":1789833600000}]},"la-reading-5":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789833600000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789920000000}]},"la-writing-0":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789920000000}]},"la-writing-1":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789920000000}]},"la-writing-2":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789920000000}]},"la-writing-3":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":90,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":90,"ts":1789920000000}]},"la-writing-4":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789920000000}]},"math-prealg-8":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":240,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":60,"ts":1789920000000}]},"math-prealg-9":{"status":"available","bestPct":0,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000}]},"math-prealg-10":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":4,"total":4,"pct":1,"durationSec":60,"ts":1789920000000},{"mode":"assessment","correct":6,"total":6,"pct":1,"durationSec":120,"ts":1789920000000}]},"la-vocab-6":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":9,"total":9,"pct":1,"durationSec":60,"ts":1790006400000},{"mode":"assessment","correct":13,"total":13,"pct":1,"durationSec":120,"ts":1790006400000}]},"la-vocab-7":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":120,"ts":1790006400000},{"mode":"assessment","correct":15,"total":15,"pct":1,"durationSec":300,"ts":1790006400000}]},"la-vocab-8":{"status":"mastered","bestPct":0.9333333333333333,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":60,"ts":1790006400000},{"mode":"assessment","correct":14,"total":15,"pct":0.9333333333333333,"durationSec":360,"ts":1790006400000}]},"la-vocab-9":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":120,"ts":1790006400000},{"mode":"assessment","correct":15,"total":15,"pct":1,"durationSec":240,"ts":1790006400000}]},"math-prealg-11":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":50,"total":51,"pct":0.9803921568627451,"durationSec":2040,"ts":1790006400000},{"mode":"assessment","correct":25,"total":25,"pct":1,"durationSec":780,"ts":1790006400000}]},"la-vocab-10":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":60,"ts":1790006400000},{"mode":"assessment","correct":15,"total":15,"pct":1,"durationSec":240,"ts":1790006400000}]},"la-vocab-11":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":60,"ts":1790006400000},{"mode":"assessment","correct":15,"total":15,"pct":1,"durationSec":120,"ts":1790006400000}]},"la-vocab-12":{"status":"mastered","bestPct":1,"attempts":[{"mode":"practice","correct":10,"total":10,"pct":1,"durationSec":120,"ts":1790006400000},{"mode":"assessment","correct":15,"total":15,"pct":1,"durationSec":180,"ts":1790006400000},{"mode":"practice","correct":2,"total":10,"pct":0.2,"durationSec":90,"ts":1790006400000}]},"math-prealg-12":{"status":"available","bestPct":0,"attempts":[{"mode":"practice","correct":37,"total":40,"pct":0.925,"durationSec":1200,"ts":1790352000000}]},"la-writing-5":{"status":"pending_review","bestPct":0,"attempts":[{"mode":"writing","durationSec":1440,"ts":1789920000000}],"writingText":"I think students should not be allowed to choose their seats in class for many reasons. First of all, if they choose their seats they  would sit right next to their best friend every single time. If that happens, they will talk and not pay attention, so they have no idea what to do the night before the big test. They will not understand, so they will be up until midnight trying to figure out what to do. However, if you cannot sit with your best friend, you won’t be tempted to talk with the person next to you and you will actually get your work done. For example, the kid who pays attention can go to bed at a reasonable hour because they are confident in themselves, but the person who didn’t pay attention will be going to sleep at 2 am. So that’s why I think students shouldn’t pick their own seats.","teacherNote":"","revisionRequested":false},"math-prealg-0":{"status":"mastered","bestPct":1,"attempts":[]},"math-prealg-1":{"status":"mastered","bestPct":1,"attempts":[]}};
@@ -1230,6 +1266,76 @@ function buildActivityRow(d, durationMin, effectiveMin){
 
 function go(screen, extra){ state = Object.assign({screen:screen}, extra||{}); render(); window.scrollTo(0,0); }
 
+/* ---------- 6th Grade Math Test flow ---------- */
+let mathTest = null;
+let mathTestTimerId = null;
+function startMathTest(){
+  if(mathTestTimerId){ clearInterval(mathTestTimerId); mathTestTimerId = null; }
+  mathTest = { qIdx:0, answers:new Array(MATH_TEST_6TH.length).fill(null), picked:null, startTs:Date.now(), endAt: Date.now() + 60*60*1000 };
+  go("mathtest");
+  mathTestTimerId = setInterval(mathTestTick, 1000);
+}
+function mathTestTick(){
+  if(!mathTest || state.screen!=="mathtest"){ if(mathTestTimerId){ clearInterval(mathTestTimerId); mathTestTimerId=null; } return; }
+  const remaining = Math.max(0, mathTest.endAt - Date.now());
+  const el = document.getElementById("testTimer");
+  if(el) el.textContent = fmtDur(remaining/1000);
+  if(remaining <= 0) finishMathTest();
+}
+function pickMathTestChoice(ci){
+  mathTest.picked = ci;
+  mathTest.answers[mathTest.qIdx] = ci;
+  render();
+}
+function nextMathTestQuestion(){
+  if(mathTest.qIdx < MATH_TEST_6TH.length-1){ mathTest.qIdx++; mathTest.picked = mathTest.answers[mathTest.qIdx]; render(); }
+  else finishMathTest();
+}
+function prevMathTestQuestion(){
+  if(mathTest.qIdx > 0){ mathTest.qIdx--; mathTest.picked = mathTest.answers[mathTest.qIdx]; render(); }
+}
+function finishMathTest(){
+  if(mathTestTimerId){ clearInterval(mathTestTimerId); mathTestTimerId = null; }
+  const elapsedSec = Math.min(3600, Math.round((Date.now()-mathTest.startTs)/1000));
+  const byCat = {}, order = [];
+  MATH_TEST_6TH.forEach(function(item,i){
+    if(!byCat[item.cat]){ byCat[item.cat] = {correct:0,total:0}; order.push(item.cat); }
+    byCat[item.cat].total++;
+    if(mathTest.answers[i]===item.correct) byCat[item.cat].correct++;
+  });
+  let totalCorrect=0; order.forEach(function(c){ totalCorrect += byCat[c].correct; });
+  const totalQ = MATH_TEST_6TH.length;
+  const minutes = Math.round(elapsedSec/60);
+  const dateStr = isoToMDY(todayISO());
+  const rows = order.map(function(cat){
+    const c = byCat[cat];
+    return { date:dateStr, subject:"Math", area:"6th Grade Math Test", topic:cat, mode:"Test", score:c.correct+"/"+c.total+" ("+fmtPct(c.correct/c.total)+")", minutes:"", status:"", notes:"" };
+  });
+  rows.push({ date:dateStr, subject:"Math", area:"6th Grade Math Test", topic:"OVERALL", mode:"Test", score:totalCorrect+"/"+totalQ+" ("+fmtPct(totalCorrect/totalQ)+")", minutes:minutes, status:"Completed", notes:"" });
+
+  const result = { byCat:byCat, order:order, totalCorrect:totalCorrect, totalQ:totalQ, elapsedSec:elapsedSec, answers:mathTest.answers.slice(), rows:rows };
+  state = { screen:"mathtestresults", testResult: result };
+  render();
+  saveMathTestRows(rows);
+}
+function saveMathTestRows(rows){
+  if(!SAVE_URL) return;
+  let done = 0;
+  const updateStatus = function(){
+    const el = document.getElementById("autoSaveStatus");
+    if(el) el.textContent = "Saved "+done+"/"+rows.length+" rows to your Progress Sheet"+(done===rows.length?" ✓":"…");
+  };
+  updateStatus();
+  rows.forEach(function(fields){
+    fetch(SAVE_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(fields) })
+      .then(function(){ done++; updateStatus(); })
+      .catch(function(){ done++; updateStatus(); });
+  });
+}
+function buildMathTestCopyRows(rows){
+  return rows.map(function(f){ return [f.date,f.subject,f.area,f.topic,f.mode,f.score,f.minutes,f.status,f.notes].join("\t"); }).join("\n");
+}
+
 /* ---------- Quiz flow ---------- */
 function startQuiz(subj,area,idx,mode){
   const topic = getTopics(subj,area)[idx];
@@ -1323,6 +1429,7 @@ function topbarHtml(){
     + '<div class="top-actions">'
     + '<a class="btn btn-ghost" href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet ↗</a>'
     + '<button class="btn" data-act="open-activity">📝 Log Activity</button>'
+    + (state.screen!=="mathtest" ? '<button class="btn" data-act="open-mathtest">🧪 6th Grade Math Test</button>' : '')
     + (state.screen==="teacher"
         ? '<button class="btn" data-act="home">Student View</button>'
         : '<button class="btn" data-act="teacher-login">Teacher Dashboard</button>')
@@ -1338,6 +1445,8 @@ function bodyHtml(){
     case "results": return resultsHtml();
     case "writing": return writingHtml();
     case "activity": return activityLogHtml();
+    case "mathtest": return mathTestHtml();
+    case "mathtestresults": return mathTestResultsHtml();
     case "teacher-login": return homeHtml() + pinModalHtml();
     case "teacher": return teacherHtml();
     default: return homeHtml();
@@ -1386,6 +1495,53 @@ function activitySaveButtonsHtml(d, durationMin, effectiveMin){
   return '<button class="btn btn-primary" data-act="save-activity" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save Activity Log</button>'
     + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
     + '<button class="btn btn-ghost" data-act="clear-activity">Log Another</button>';
+}
+
+function mathTestHtml(){
+  const total = MATH_TEST_6TH.length;
+  const item = MATH_TEST_6TH[mathTest.qIdx];
+  const remaining = Math.max(0, mathTest.endAt - Date.now());
+  let html = '<div style="--accent:var(--math)">';
+  html += '<div class="quiz-head"><div><b>6th Grade Math Test</b> <span class="pill pill-muted">'+esc(item.cat)+'</span></div><div class="mono" style="font-size:13px;color:var(--ink-soft)">Question '+(mathTest.qIdx+1)+' of '+total+' · <span id="testTimer">'+fmtDur(remaining/1000)+'</span> left</div></div>';
+  html += '<div class="progress-track"><div class="progress-fill" style="width:'+Math.round((mathTest.qIdx/total)*100)+'%"></div></div>';
+  html += '<div class="question-text">'+esc(item.q)+'</div>';
+  html += '<div class="choices">'+item.choices.map(function(choiceText,ci){
+    const cls = mathTest.picked===ci ? "picked-neutral" : "";
+    return '<button class="choice '+cls+'" data-act="test-pick" data-ci="'+ci+'"><span class="letter">'+"ABCD"[ci]+'</span>'+esc(choiceText)+'</button>';
+  }).join("")+'</div>';
+  html += '<div class="quiz-footer">'
+    + (mathTest.qIdx>0 ? '<button class="btn btn-ghost" data-act="test-prev">Back</button>' : '<span></span>')
+    + '<button class="btn btn-primary" data-act="test-next" '+(mathTest.picked===null?"disabled":"")+'>'+(mathTest.qIdx<total-1?"Next":"Submit Test")+'</button>'
+    + '</div>';
+  html += '</div>';
+  return html;
+}
+function mathTestResultsHtml(){
+  const r = state.testResult;
+  const pct = r.totalCorrect/r.totalQ;
+  let html = '<div style="--accent:var(--math)">';
+  html += '<div class="result-banner '+(pct>=0.7?"pass":"fail")+'"><div class="score mono">'+r.totalCorrect+'/'+r.totalQ+'</div><div><b>6th Grade Math Test complete!</b><div style="color:var(--ink-soft);font-size:13px">Score: '+fmtPct(pct)+' · Time used: '+fmtDur(r.elapsedSec)+'</div></div></div>';
+  html += '<h3 style="margin-top:4px">Score by Topic</h3>';
+  html += '<div class="overflow-x"><table class="tt"><thead><tr><th>Topic</th><th>Score</th><th>%</th></tr></thead><tbody>'
+    + r.order.map(function(cat){
+        const c = r.byCat[cat];
+        return '<tr><td>'+esc(cat)+'</td><td class="mono">'+c.correct+'/'+c.total+'</td><td class="mono">'+fmtPct(c.correct/c.total)+'</td></tr>';
+      }).join("")
+    + '</tbody></table></div>';
+  html += '<h3 style="margin-top:18px">Review answers</h3>';
+  html += MATH_TEST_6TH.map(function(item,i){
+    const picked = r.answers[i];
+    const right = picked===item.correct;
+    return '<div class="review-item '+(right?"right":"wrong")+'"><div class="q">'+esc(item.cat)+': '+esc(item.q)+'</div><div class="ans">Your answer: '+esc(picked!=null?item.choices[picked]:"—")+(right?"":" · Correct answer: "+esc(item.choices[item.correct]))+'</div></div>';
+  }).join("");
+  const copyRows = buildMathTestCopyRows(r.rows);
+  html += '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'
+    + '<button class="btn btn-primary" data-act="home">Back to Home</button>'
+    + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(copyRows)+'">Copy All Rows</button>'
+    + '</div>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px"><span id="autoSaveStatus">Saving to your Progress Sheet…</span> <a href="'+SHEET_URL+'" target="_blank" rel="noopener">View Sheet ↗</a></p>';
+  html += '</div>';
+  return html;
 }
 
 function homeHtml(){
@@ -1674,6 +1830,10 @@ function bindClicks(root){
         try{ sendRowAutomatically(JSON.parse(el.dataset.fields), el); }catch(e){}
       }
       else if(act==="clear-activity"){ activityDraft = null; go("activity"); }
+      else if(act==="open-mathtest"){ startMathTest(); }
+      else if(act==="test-pick"){ pickMathTestChoice(Number(el.dataset.ci)); }
+      else if(act==="test-next"){ nextMathTestQuestion(); }
+      else if(act==="test-prev"){ prevMathTestQuestion(); }
       else if(act==="teacher-login") go("teacher-login",{subj:state.subj,area:state.area,idx:state.idx});
       else if(act==="close-modal") go("home");
       else if(act==="pin-submit"){
