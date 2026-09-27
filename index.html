@@ -1263,7 +1263,24 @@ function finishQuiz(){
   const newStatus = quiz.mode==="assessment" ? (pct>=PASS_PCT ? "mastered" : (prog.status==="mastered"?"mastered":"available")) : prog.status;
   const bestPct = quiz.mode==="assessment" ? Math.max(prog.bestPct||0, pct) : prog.bestPct;
   state.screen="results"; state.result = {correct:correct,total:quiz.questions.length,pct:pct,mode:quiz.mode,questions:quiz.questions,answers:quiz.answers.slice(),passed:pct>=PASS_PCT,durationSec:durationSec};
+
+  // Auto-save every attempt to the Progress Sheet -- no manual click required, so
+  // results can't be selectively skipped (previously only "Save My Results" clicks
+  // made it into the sheet, so only 100% attempts tended to get logged).
+  const topic = getTopics(state.subj,state.area)[state.idx];
+  const minutes = Math.round(durationSec/60);
+  const scoreLabel = correct+"/"+quiz.questions.length+" ("+fmtPct(pct)+")";
+  const statusLabel = quiz.mode==="assessment"?(pct>=PASS_PCT?"Mastered":"Not yet"):"—";
+  const fields = rowFields(state.subj, state.area, topic.t, quiz.mode==="practice"?"Practice":"Assessment", scoreLabel, minutes, statusLabel, "");
+  autoSaveResult(fields);
+
   persistProgress(key, Object.assign({}, prog, {status:newStatus, bestPct:bestPct, attempts:attempts}));
+}
+function autoSaveResult(fields){
+  if(!SAVE_URL) return;
+  fetch(SAVE_URL, { method:"POST", mode:"no-cors", body: JSON.stringify(fields) })
+    .then(function(){ const el=document.getElementById("autoSaveStatus"); if(el) el.textContent="Saved automatically ✓"; })
+    .catch(function(){ const el=document.getElementById("autoSaveStatus"); if(el) el.textContent="Couldn't auto-save — use \"Copy Row\" below as backup."; });
 }
 
 /* ---------- Writing flow ---------- */
@@ -1536,14 +1553,12 @@ function resultsHtml(){
   }).join("");
   const scoreLabel = r.correct+"/"+r.total+" ("+fmtPct(r.pct)+")";
   const statusLabel = r.mode==="assessment"?(r.passed?"Mastered":"Not yet"):"—";
-  const fields = rowFields(state.subj, state.area, topic.t, r.mode==="practice"?"Practice":"Assessment", scoreLabel, minutes, statusLabel, "");
   const row = buildRow(state.subj, state.area, topic.t, r.mode==="practice"?"Practice":"Assessment", scoreLabel, minutes, statusLabel, "");
   html += '<div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">'
-    + '<button class="btn btn-primary" data-act="save-row" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save My Results</button>'
+    + '<button class="btn btn-primary" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Back to Topic</button>'
     + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
-    + '<button class="btn btn-ghost" data-act="open-topic" data-subj="'+state.subj+'" data-area="'+state.area+'" data-idx="'+state.idx+'">Back to Topic</button>'
     + '</div>';
-  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a> — no copying needed.</p>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px"><span id="autoSaveStatus">Saving to your Progress Sheet…</span> <a href="'+SHEET_URL+'" target="_blank" rel="noopener">View Sheet ↗</a></p>';
   html += '</div>';
   return html;
 }
