@@ -168,6 +168,10 @@ table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
 .modal input{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;margin:10px 0;background:var(--bg);color:var(--ink);}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
 .empty-note{color:var(--ink-soft);font-size:13.5px;padding:14px;text-align:center;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);margin-bottom:6px;}
+.field input, .field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);}
+.field textarea{min-height:90px;}
 </style>
 </head>
 <body>
@@ -1061,6 +1065,7 @@ const CURRICULUM = {
 
 const PASS_PCT = 0.8;
 const ATTEMPT_CAP = 20;
+const ACTIVITY_SUBJECTS = ["Math","Reading","Music","Golf","Vocabulary"];
 
 /* ---------- Progress snapshot reconstructed from the Google Sheet log (docs.google.com/spreadsheets/d/120T9AJJTgE9pzX21jtseQQj1PO733ubD_MxHDZVJ86o) as of 2026-09-20.
    Used only to seed a browser that has no local progress yet (e.g. a new device) — never overwrites existing local progress. */
@@ -1074,6 +1079,12 @@ function fmtDur(sec){ sec=Math.max(0,Math.round(sec)); const m=Math.floor(sec/60
 function fmtDate(ts){ const d=new Date(ts); return (d.getMonth()+1)+"/"+d.getDate(); }
 function dayKey(ts){ const d=new Date(ts); return d.getFullYear()+"-"+d.getMonth()+"-"+d.getDate(); }
 function defaultProgress(){ return { status:"available", bestPct:0, attempts:[], writingText:"", teacherNote:"", revisionRequested:false }; }
+function pad2(n){ return String(n).padStart(2,"0"); }
+function todayISO(){ const d=new Date(); return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+function isoToMDY(iso){ if(!iso) return ""; const [y,m,d]=iso.split("-").map(Number); return m+"/"+d+"/"+y; }
+function timeToMinutes(t){ if(!t) return null; const parts=t.split(":"); if(parts.length<2) return null; const h=Number(parts[0]), m=Number(parts[1]); if(isNaN(h)||isNaN(m)) return null; return h*60+m; }
+function fmt12h(t){ if(!t) return ""; const [h,m]=t.split(":").map(Number); const per=h>=12?"PM":"AM"; let h12=h%12; if(h12===0) h12=12; return h12+":"+pad2(m)+" "+per; }
+function fmtDurationLong(mins){ if(mins==null) return ""; const h=Math.floor(mins/60), m=mins%60; return h>0 ? (h+"h "+m+"m") : (m+"m"); }
 
 /* ---------- Store (local to this device — no login required) ---------- */
 const LOCAL_KEY = "studyTrailData_v1";
@@ -1200,6 +1211,22 @@ function currentStreak(){
 
 /* ---------- App state ---------- */
 let state = { screen:"home", subj:null, area:null, idx:null, quiz:null, teacherAuthed:false, expandedSub:null };
+let activityDraft = null;
+function openActivityLog(){
+  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"" }; }
+  go("activity");
+}
+function buildActivityFields(d, durationMin){
+  return {
+    date: isoToMDY(d.date), subject: d.subject, area: "Activity Log",
+    topic: fmt12h(d.start)+" – "+fmt12h(d.end), mode: "Activity",
+    score: "", minutes: durationMin, status: "Logged", notes: sanitizeCell(d.details)
+  };
+}
+function buildActivityRow(d, durationMin){
+  const f = buildActivityFields(d, durationMin);
+  return [f.date, f.subject, f.area, f.topic, f.mode, f.score, f.minutes, f.status, f.notes].join("\t");
+}
 
 function go(screen, extra){ state = Object.assign({screen:screen}, extra||{}); render(); window.scrollTo(0,0); }
 
@@ -1278,6 +1305,7 @@ function topbarHtml(){
     + '<div class="brand"><div class="mark">🧭</div><div class="brand-name">Study Trail</div></div>'
     + '<div class="top-actions">'
     + '<a class="btn btn-ghost" href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet ↗</a>'
+    + '<button class="btn" data-act="open-activity">📝 Log Activity</button>'
     + (state.screen==="teacher"
         ? '<button class="btn" data-act="home">Student View</button>'
         : '<button class="btn" data-act="teacher-login">Teacher Dashboard</button>')
@@ -1292,10 +1320,50 @@ function bodyHtml(){
     case "quiz": return quizHtml();
     case "results": return resultsHtml();
     case "writing": return writingHtml();
+    case "activity": return activityLogHtml();
     case "teacher-login": return homeHtml() + pinModalHtml();
     case "teacher": return teacherHtml();
     default: return homeHtml();
   }
+}
+
+function activityLogHtml(){
+  if(!activityDraft){ activityDraft = { subject: ACTIVITY_SUBJECTS[0], date: todayISO(), start:"", end:"", details:"" }; }
+  const d = activityDraft;
+  const startMin = timeToMinutes(d.start), endMin = timeToMinutes(d.end);
+  const validTimes = startMin!=null && endMin!=null && endMin>startMin;
+  const durationMin = validTimes ? (endMin-startMin) : null;
+  let html = '<div class="crumbs"><button data-act="home">Home</button> / Log Activity</div>';
+  html += '<div class="topic-panel">';
+  html += '<h2 class="display">Log an Activity</h2>';
+  html += '<div class="objective-box">Log time spent on math, reading, music, golf, or vocabulary practice outside the trail. This gets saved straight to the Progress Sheet.</div>';
+  html += '<div class="field"><label>Subject</label><select id="actSubject">'
+    + ACTIVITY_SUBJECTS.map(function(s){ return '<option value="'+s+'" '+(s===d.subject?"selected":"")+'>'+s+'</option>'; }).join("")
+    + '</select></div>';
+  html += '<div class="field"><label>Date</label><input id="actDate" type="date" value="'+esc(d.date)+'"></div>';
+  html += '<div style="display:flex;gap:12px">'
+    + '<div class="field" style="flex:1"><label>Start Time</label><input id="actStart" type="time" value="'+esc(d.start)+'"></div>'
+    + '<div class="field" style="flex:1"><label>End Time</label><input id="actEnd" type="time" value="'+esc(d.end)+'"></div>'
+    + '</div>';
+  if(d.start && d.end){
+    html += validTimes
+      ? '<p class="pill pill-good">Duration: '+fmtDurationLong(durationMin)+'</p>'
+      : '<p class="pill pill-bad">End time must be after start time.</p>';
+  }
+  html += '<div class="field"><label>What did you work on?</label><textarea id="actDetails" placeholder="e.g. Practiced scales and worked on a new song with the teacher.">'+esc(d.details)+'</textarea></div>';
+  html += '<div id="actSaveWrap" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px">'+activitySaveButtonsHtml(d, durationMin)+'</div>';
+  html += '<p style="font-size:12px;color:var(--ink-soft);margin-top:8px">One tap saves this straight to the <a href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet</a>.</p>';
+  html += '</div>';
+  return html;
+}
+function activitySaveButtonsHtml(d, durationMin){
+  const canSave = durationMin!=null && d.details.trim().length>0;
+  if(!canSave) return '<p style="font-size:12.5px;color:var(--ink-soft)">Fill in the start time, end time, and a short description to save.</p>';
+  const fields = buildActivityFields(d, durationMin);
+  const row = buildActivityRow(d, durationMin);
+  return '<button class="btn btn-primary" data-act="save-activity" data-fields="'+esc(JSON.stringify(fields))+'">💾 Save Activity Log</button>'
+    + '<button class="btn btn-sm btn-ghost" data-act="copy-row" data-row="'+esc(row)+'">Copy Row instead</button>'
+    + '<button class="btn btn-ghost" data-act="clear-activity">Log Another</button>';
 }
 
 function homeHtml(){
@@ -1563,8 +1631,8 @@ function teacherHtml(){
 }
 
 /* ---------- Event wiring ---------- */
-function wireEvents(){
-  document.querySelectorAll("[data-act]").forEach(function(el){
+function bindClicks(root){
+  root.querySelectorAll("[data-act]").forEach(function(el){
     el.addEventListener("click", function(ev){
       const act = el.getAttribute("data-act");
       if(act==="home") go("home");
@@ -1581,6 +1649,11 @@ function wireEvents(){
       else if(act==="save-row"){
         try{ sendRowAutomatically(JSON.parse(el.dataset.fields), el); }catch(e){}
       }
+      else if(act==="open-activity") openActivityLog();
+      else if(act==="save-activity"){
+        try{ sendRowAutomatically(JSON.parse(el.dataset.fields), el); }catch(e){}
+      }
+      else if(act==="clear-activity"){ activityDraft = null; go("activity"); }
       else if(act==="teacher-login") go("teacher-login",{subj:state.subj,area:state.area,idx:state.idx});
       else if(act==="close-modal") go("home");
       else if(act==="pin-submit"){
@@ -1602,8 +1675,30 @@ function wireEvents(){
       }
     });
   });
+}
+function wireEvents(){
+  bindClicks(document);
   const ta = document.getElementById("writingText");
   if(ta){ ta.addEventListener("input", function(){ state.text = ta.value; const cc=document.querySelector(".char-count"); if(cc) cc.textContent = state.text.trim().length+" characters"; document.querySelector('[data-act="submit-writing"]').disabled = !(state.checks.every(Boolean) && state.text.trim().length>40); }); }
+
+  const actSubject = document.getElementById("actSubject");
+  if(actSubject) actSubject.addEventListener("change", function(){ activityDraft.subject = actSubject.value; render(); });
+  const actDate = document.getElementById("actDate");
+  if(actDate) actDate.addEventListener("change", function(){ activityDraft.date = actDate.value; render(); });
+  const actStart = document.getElementById("actStart");
+  if(actStart) actStart.addEventListener("change", function(){ activityDraft.start = actStart.value; render(); });
+  const actEnd = document.getElementById("actEnd");
+  if(actEnd) actEnd.addEventListener("change", function(){ activityDraft.end = actEnd.value; render(); });
+  const actDetails = document.getElementById("actDetails");
+  if(actDetails){
+    actDetails.addEventListener("input", function(){
+      activityDraft.details = actDetails.value;
+      const startMin = timeToMinutes(activityDraft.start), endMin = timeToMinutes(activityDraft.end);
+      const durationMin = (startMin!=null && endMin!=null && endMin>startMin) ? (endMin-startMin) : null;
+      const wrap = document.getElementById("actSaveWrap");
+      if(wrap){ wrap.innerHTML = activitySaveButtonsHtml(activityDraft, durationMin); bindClicks(wrap); }
+    });
+  }
 }
 
 initStore();
