@@ -1471,7 +1471,6 @@ function topbarHtml(){
     + '<div class="top-actions">'
     + '<a class="btn btn-ghost" href="'+SHEET_URL+'" target="_blank" rel="noopener">Progress Sheet ↗</a>'
     + '<button class="btn" data-act="open-activity">📝 Log Activity</button>'
-    + (state.screen!=="mathtest" ? '<button class="btn" data-act="open-mathtest" data-grade="6">🧪 6th Grade Test</button><button class="btn" data-act="open-mathtest" data-grade="7">🧪 7th Grade Test</button>' : '')
     + (state.screen==="teacher"
         ? '<button class="btn" data-act="home">Student View</button>'
         : '<button class="btn" data-act="teacher-login">Teacher Dashboard</button>')
@@ -1650,11 +1649,21 @@ function subjectHtml(){
   if(state.idx!=null && state.area===area) panel = topicPanelHtml(subj,area,state.idx);
   else panel = '<div class="topic-panel"><p class="empty-note">Choose a topic on the left to see its objective and start practicing.</p></div>';
 
+  let testLinks = "";
+  if(subj==="math"){
+    testLinks = '<div style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px dashed var(--line)">'
+      + Object.keys(MATH_TESTS).map(function(g){
+          const def = MATH_TESTS[g];
+          return '<button class="node" data-act="open-mathtest" data-grade="'+g+'"><div class="dot">🧪</div><div class="info"><b>'+esc(def.label)+'</b><small>'+def.questions.length+' Qs · 60 min · scored by topic</small></div></button>';
+        }).join("")
+      + '</div>';
+  }
+
   return '<div class="crumbs"><button data-act="home">Subjects</button> / '+esc(cur.name)+'</div>'
     + '<div class="subject-head"><h1 class="display">'+esc(cur.name)+'</h1></div>'
     + '<div class="area-tabs">'+tabs+'</div>'
     + '<div class="trail-layout" style="--accent:'+accent+'">'
-    + '<div class="trail">'+nodes+'</div>'
+    + '<div class="trail">'+testLinks+nodes+'</div>'
     + '<div>'+panel+'</div>'
     + '</div>';
 }
