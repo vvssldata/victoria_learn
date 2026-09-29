@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Study Trail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -172,14 +173,61 @@ table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
 .field label{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft);margin-bottom:6px;}
 .field input, .field select{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font:inherit;font-size:14.5px;background:var(--surface);color:var(--ink);}
 .field textarea{min-height:90px;}
+
+.lockscreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;}
+.lockscreen[hidden]{display:none;}
+.lock-card{max-width:320px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px 24px;box-shadow:var(--shadow);text-align:center;}
+.lock-card .mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--language),var(--math));display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;}
+.lock-card h1{font-size:22px;margin:0 0 6px;}
+.lock-card p{color:var(--ink-soft);font-size:14px;margin:0 0 18px;}
+.lock-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;background:var(--bg);color:var(--ink);margin-bottom:12px;}
+.lock-card button{width:100%;border:none;border-radius:8px;padding:12px;font:inherit;font-weight:600;font-size:15px;background:var(--math);color:#fff;}
+.lock-error{color:var(--bad);font-size:13px;margin-top:12px;margin-bottom:0;}
 </style>
 </head>
 <body>
+<div id="lockscreen" class="lockscreen">
+  <div class="lock-card">
+    <div class="mark">🔒</div>
+    <h1 class="display">Study Trail</h1>
+    <p>Enter the passcode to continue.</p>
+    <form id="lockForm" autocomplete="off">
+      <input type="password" inputmode="numeric" id="lockInput" placeholder="Passcode" autocomplete="off">
+      <button type="submit">Unlock</button>
+    </form>
+    <p id="lockError" class="lock-error" hidden>Incorrect passcode &mdash; try again.</p>
+  </div>
+</div>
 <div class="wrap" id="app"></div>
 
 <script>
 (function(){
 "use strict";
+
+/* ---------- Access gate ---------- */
+(function(){
+  var LOCK_KEY = "studyTrailLock_victoria_v1";
+  var LOCK_CODE = "7777";
+  var lockEl = document.getElementById("lockscreen");
+  var formEl = document.getElementById("lockForm");
+  var inputEl = document.getElementById("lockInput");
+  var errEl = document.getElementById("lockError");
+  var unlocked = false;
+  try{ unlocked = localStorage.getItem(LOCK_KEY) === "1"; }catch(e){}
+  if(unlocked){ lockEl.hidden = true; return; }
+  formEl.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(inputEl.value === LOCK_CODE){
+      try{ localStorage.setItem(LOCK_KEY, "1"); }catch(e){}
+      lockEl.hidden = true;
+    } else {
+      errEl.hidden = false;
+      inputEl.value = "";
+      inputEl.focus();
+    }
+  });
+  setTimeout(function(){ inputEl.focus(); }, 0);
+})();
 
 /* ---------- Curriculum data ---------- */
 const CURRICULUM = {
