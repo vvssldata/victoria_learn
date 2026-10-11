@@ -183,6 +183,30 @@ table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
 .lock-card input{width:100%;border:1px solid var(--line);border-radius:8px;padding:12px 14px;font:inherit;font-size:20px;letter-spacing:.3em;text-align:center;background:var(--bg);color:var(--ink);margin-bottom:12px;}
 .lock-card button{width:100%;border:none;border-radius:8px;padding:12px;font:inherit;font-weight:600;font-size:15px;background:var(--math);color:#fff;}
 .lock-error{color:var(--bad);font-size:13px;margin-top:12px;margin-bottom:0;}
+
+.home-widgets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:22px;}
+.widget-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);}
+.widget-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.widget-head h3{margin:0;font-size:15px;}
+.task-add-row{display:flex;gap:6px;margin-bottom:10px;}
+.task-add-row input{flex:1;min-width:0;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;font-size:13.5px;background:var(--bg);color:var(--ink);}
+.task-list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow-y:auto;}
+.task-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;background:var(--surface-2);cursor:pointer;}
+.task-row input[type=checkbox]{width:16px;height:16px;flex:none;}
+.task-text{flex:1;font-size:13.5px;}
+.task-row.task-done .task-text{text-decoration:line-through;color:var(--ink-soft);}
+.task-del{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:13px;padding:2px 4px;flex:none;}
+.task-del:hover{color:var(--bad);}
+.cal-nav{display:flex;align-items:center;gap:6px;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{font-size:10.5px;color:var(--ink-soft);text-align:center;text-transform:uppercase;letter-spacing:.03em;padding-bottom:4px;}
+.cal-cell{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--surface-2);font-size:12px;color:var(--ink-soft);}
+.cal-cell.cal-empty{background:transparent;}
+.cal-cell.cal-today{box-shadow:inset 0 0 0 2px var(--chart);}
+.cal-cell.cal-some{background:var(--good-soft);color:var(--ink);}
+.cal-cell.cal-busy{background:var(--good);color:#fff;}
+.cal-legend{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);margin-top:10px;}
+.cal-legend-dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block;}
 </style>
 </head>
 <body>
@@ -1215,16 +1239,18 @@ const SHEET_URL = "https://docs.google.com/spreadsheets/d/120T9AJJTgE9pzX21jtseQ
 const SAVE_URL = "https://script.google.com/macros/s/AKfycbzzszdX1hmcaa735PmAHvUFjFrYrA6vYaqbcawb_ALtgqwmq3jeZM44vny0syTCL5u5/exec";
 let progressData = {};
 let settings = { pin:"1234" };
+let tasks = [];
+let activityLog = [];
 
 function loadLocal(){
   try{
     const raw = localStorage.getItem(LOCAL_KEY);
-    if(raw){ const parsed = JSON.parse(raw); progressData = parsed.progress||{}; settings = Object.assign({pin:"1234"}, parsed.settings||{}); }
+    if(raw){ const parsed = JSON.parse(raw); progressData = parsed.progress||{}; settings = Object.assign({pin:"1234"}, parsed.settings||{}); tasks = parsed.tasks||[]; activityLog = parsed.activityLog||[]; }
     else { progressData = JSON.parse(JSON.stringify(SHEET_PROGRESS_SEED)); saveLocal(); }
   }catch(e){}
 }
 function saveLocal(){
-  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({progress:progressData, settings})); }catch(e){}
+  try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({progress:progressData, settings, tasks, activityLog})); }catch(e){}
 }
 
 async function initStore(){
@@ -1330,6 +1356,47 @@ function currentStreak(){
     if(daysWithActivity.has(k)) streak++; else break;
   }
   return streak;
+}
+
+/* ---------- Tasks (parent-assigned to-dos) ---------- */
+function addTask(text){
+  text = (text||"").trim();
+  if(!text) return;
+  tasks.push({ id: Date.now()+"-"+Math.random().toString(36).slice(2), text:text, done:false, createdAt:Date.now() });
+  saveLocal(); render();
+}
+function toggleTask(id){
+  const t = tasks.find(function(x){ return x.id===id; });
+  if(t){ t.done = !t.done; t.doneAt = t.done ? Date.now() : null; saveLocal(); render(); }
+}
+function deleteTask(id){
+  tasks = tasks.filter(function(x){ return x.id!==id; });
+  saveLocal(); render();
+}
+
+/* ---------- Calendar (activity history) ---------- */
+let calMonth = null;
+function getCalMonth(){
+  if(!calMonth){ const now=new Date(); calMonth = { y: now.getFullYear(), m: now.getMonth() }; }
+  return calMonth;
+}
+function calPrevMonth(){ const c=getCalMonth(); c.m--; if(c.m<0){ c.m=11; c.y--; } render(); }
+function calNextMonth(){ const c=getCalMonth(); c.m++; if(c.m>11){ c.m=0; c.y++; } render(); }
+function calendarDayData(){
+  const map = {};
+  allAttempts().forEach(function(a){
+    const k = dayKey(a.ts);
+    if(!map[k]) map[k] = { mins:0, count:0 };
+    map[k].mins += Math.round((a.durationSec||0)/60);
+    map[k].count++;
+  });
+  activityLog.forEach(function(a){
+    const k = dayKey(a.ts);
+    if(!map[k]) map[k] = { mins:0, count:0 };
+    map[k].mins += (a.minutes||0);
+    map[k].count++;
+  });
+  return map;
 }
 
 /* ---------- App state ---------- */
@@ -1633,6 +1700,47 @@ function mathTestResultsHtml(){
   return html;
 }
 
+function tasksHtml(){
+  const pending = tasks.filter(function(t){ return !t.done; });
+  const done = tasks.filter(function(t){ return t.done; });
+  const rows = pending.concat(done).map(function(t){
+    return '<label class="task-row '+(t.done?"task-done":"")+'">'
+      + '<input type="checkbox" data-act="toggle-task" data-id="'+esc(t.id)+'" '+(t.done?"checked":"")+'>'
+      + '<span class="task-text">'+esc(t.text)+'</span>'
+      + '<button type="button" class="task-del" data-act="delete-task" data-id="'+esc(t.id)+'" aria-label="Delete task">\u2715</button>'
+      + '</label>';
+  }).join("");
+  return '<div class="widget-card">'
+    + '<div class="widget-head"><h3>Tasks</h3><span class="pill pill-muted">'+pending.length+' open</span></div>'
+    + '<div class="task-add-row"><input type="text" id="taskInput" placeholder="Add a task\u2026" autocomplete="off"><button type="button" class="btn btn-sm btn-primary" data-act="add-task">Add</button></div>'
+    + (rows ? '<div class="task-list">'+rows+'</div>' : '<p class="empty-note">No tasks yet \u2014 add one above.</p>')
+    + '</div>';
+}
+function calendarHtml(){
+  const c = getCalMonth();
+  const data = calendarDayData();
+  const first = new Date(c.y, c.m, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(c.y, c.m+1, 0).getDate();
+  const monthLabel = first.toLocaleDateString(undefined, { month:"long", year:"numeric" });
+  const todayK = dayKey(Date.now());
+  let cells = "";
+  for(let i=0;i<startDow;i++) cells += '<div class="cal-cell cal-empty"></div>';
+  for(let day=1; day<=daysInMonth; day++){
+    const k = c.y+"-"+c.m+"-"+day;
+    const d = data[k];
+    const isToday = k===todayK;
+    const level = !d ? "" : (d.mins>=60 ? "cal-busy" : "cal-some");
+    const title = d ? (d.mins+" min logged \u00b7 "+d.count+" item"+(d.count===1?"":"s")) : "No activity logged";
+    cells += '<div class="cal-cell '+level+' '+(isToday?"cal-today":"")+'" title="'+esc(title)+'"><span class="cal-daynum">'+day+'</span></div>';
+  }
+  const dow = ["S","M","T","W","T","F","S"].map(function(x){ return '<div class="cal-dow">'+x+'</div>'; }).join("");
+  return '<div class="widget-card">'
+    + '<div class="widget-head"><h3>Calendar</h3><div class="cal-nav"><button class="btn btn-sm btn-ghost" data-act="cal-prev" aria-label="Previous month">\u2039</button><b class="mono" style="font-size:13px">'+esc(monthLabel)+'</b><button class="btn btn-sm btn-ghost" data-act="cal-next" aria-label="Next month">\u203a</button></div></div>'
+    + '<div class="cal-grid">'+dow+cells+'</div>'
+    + '<div class="cal-legend"><span class="cal-legend-dot"></span> Activity logged that day</div>'
+    + '</div>';
+}
 function homeHtml(){
   const wk = weeklyMinutes().reduce(function(a,b){return a+b.mins;},0);
   const streak = currentStreak();
@@ -1642,6 +1750,7 @@ function homeHtml(){
     + statChip(fmtPct(subjectProgressPct("la")/100), "Language Arts")
     + statChip(fmtPct(subjectProgressPct("math")/100), "Pre-Algebra")
     + '</div>';
+  html += '<div class="home-widgets">'+tasksHtml()+calendarHtml()+'</div>';
   html += '<div class="subject-grid">';
   html += subjectCard("la");
   html += subjectCard("math");
@@ -1926,9 +2035,24 @@ function bindClicks(root){
       }
       else if(act==="open-activity") openActivityLog();
       else if(act==="save-activity"){
-        try{ sendRowAutomatically(JSON.parse(el.dataset.fields), el); }catch(e){}
+        try{
+          const fields = JSON.parse(el.dataset.fields);
+          sendRowAutomatically(fields, el);
+          activityLog.push({ ts: new Date(fields.date).getTime(), subject: fields.subject, minutes: Number(fields.minutes)||0 });
+          saveLocal();
+        }catch(e){}
       }
       else if(act==="clear-activity"){ activityDraft = null; go("activity"); }
+      else if(act==="add-task"){
+        const inp = document.getElementById("taskInput");
+        addTask(inp ? inp.value : "");
+      }
+      else if(act==="toggle-task"){ toggleTask(el.dataset.id); }
+      else if(act==="delete-task"){
+        if(confirm("Delete this task?")) deleteTask(el.dataset.id);
+      }
+      else if(act==="cal-prev"){ calPrevMonth(); }
+      else if(act==="cal-next"){ calNextMonth(); }
       else if(act==="open-mathtest"){ startMathTest(el.dataset.grade); }
       else if(act==="test-pick"){ pickMathTestChoice(Number(el.dataset.ci)); }
       else if(act==="test-next"){ nextMathTestQuestion(); }
@@ -1957,6 +2081,8 @@ function bindClicks(root){
 }
 function wireEvents(){
   bindClicks(document);
+  const taskInput = document.getElementById("taskInput");
+  if(taskInput){ taskInput.addEventListener("keydown", function(ev){ if(ev.key==="Enter"){ ev.preventDefault(); addTask(taskInput.value); } }); }
   const ta = document.getElementById("writingText");
   if(ta){ ta.addEventListener("input", function(){ state.text = ta.value; const cc=document.querySelector(".char-count"); if(cc) cc.textContent = state.text.trim().length+" characters"; document.querySelector('[data-act="submit-writing"]').disabled = !(state.checks.every(Boolean) && state.text.trim().length>40); }); }
 

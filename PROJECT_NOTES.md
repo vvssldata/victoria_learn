@@ -120,6 +120,27 @@ All three were verified with jsdom-driven tests (real DOM, mocked
 `fetch`) before pushing, not just a syntax check — see conversation
 history for the specific test scripts if extending this further.
 
+**Passcode gate** (added 2026-10-11): the site is public on GitHub
+Pages, so a client-side lock screen (passcode `7777`) now blocks the
+app until unlocked; unlock persists per-device via localStorage. Also
+added `robots.txt` + a `noindex` meta tag so it drops out of search
+results. This is a deterrent, not real security — the code lives in
+plain client-side JS like the rest of the app.
+
+**Home page: Tasks + Calendar widgets** (added 2026-10-11): the home
+screen now shows two widgets above the subject cards (subject cards
+are still there, navigation unchanged):
+- **Tasks** — a simple parent-typed to-do list (add/check off/delete),
+  stored locally in the same `localStorage` blob as progress (new
+  `tasks` array). Not synced to the Google Sheet — local-only per
+  device.
+- **Calendar** — a month view where days get a background tint based
+  on activity that day, built from existing `progressData` attempts
+  (practice/assessment timestamps) plus a new `activityLog` array
+  that records each "Log Activity" save locally (previously that
+  feature only posted to the Sheet, with no local trace — now it also
+  shows up on the calendar). Prev/next month navigation.
+
 ## Commit history for this work
 
 - `261fc72` Add Study Trail practice app
