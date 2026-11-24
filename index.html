@@ -216,6 +216,10 @@ table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
 .time-bar i{display:block;height:100%;background:var(--chart);border-radius:99px;}
 .time-val{font-size:12px;color:var(--ink-soft);}
 .time-empty{font-size:13px;color:var(--ink-soft);padding:6px 0;}
+.sub-trail{margin:0 0 6px 22px;padding-left:10px;border-left:2px solid var(--line);}
+.node.node-sub{padding:6px 10px;}
+.node.node-sub .dot{width:22px;height:22px;font-size:11px;}
+.node.node-sub .info b{font-size:12.5px;}
 </style>
 </head>
 <body>
@@ -764,7 +768,7 @@ const CURRICULUM = {
           ["Which ratio is NOT equivalent to 3:7?",["9:21","6:14","6:12","12:28"],2],
           ["A recipe uses a ratio of 3 eggs to 2 cups of milk. How many eggs are needed for 8 cups of milk?",["10","16","6","12"],3]
         ]},
-      { t:"Unit Rates & Proportions", o:"Compute unit rates and solve proportions to find missing values.",
+      { parent:0, t:"Unit Rates & Proportions", o:"Compute unit rates and solve proportions to find missing values.",
         p:[
           ["If 4 notebooks cost $10, what is the unit price per notebook?",["$2.50","$3.00","$2.00","$4.00"],0],
           ["Solve the proportion: 3/4 = x/12. What is x?",["9","8","16","10"],0],
@@ -869,7 +873,7 @@ const CURRICULUM = {
           ["A data set has mean 20 with 5 values. What do the 5 values sum to?",["100","25","20","4"],0],
           ["If a data set is 6, 6, 6, 6, 6, what is true about its mean, median, and mode?",["Only the mode is 6","They are all different","Only the mean is 6","They are all equal to 6"],3]
         ]},
-      { t:"Multiplying & Dividing Negative Numbers (Kumon G61–G63)", o:"Multiply and divide integers using the rule that an even number of negative signs gives a positive result, and an odd number gives a negative result.",
+      { parent:3, t:"Multiplying & Dividing Negative Numbers (Kumon G61–G63)", o:"Multiply and divide integers using the rule that an even number of negative signs gives a positive result, and an odd number gives a negative result.",
         p:[
           ["What is 12 ÷ (-3)?",["3","-4","4","-3"],1],
           ["What is (-12) ÷ (-3)?",["-9","9","4","-4"],2],
@@ -884,7 +888,7 @@ const CURRICULUM = {
           ["What is 16 ÷ (-2) × 0 × (-3)?",["0","-24","-8","24"],0],
           ["What is (-12) ÷ (-6)?",["72","2","-72","-2"],1]
         ]},
-      { t:"Exponents & Powers of Negative Numbers (Kumon G65)", o:"Evaluate powers of negative numbers and simplify expressions with exponents, using the rule that a negative base raised to an even power is positive and to an odd power is negative.",
+      { parent:3, t:"Exponents & Powers of Negative Numbers (Kumon G65)", o:"Evaluate powers of negative numbers and simplify expressions with exponents, using the rule that a negative base raised to an even power is positive and to an odd power is negative.",
         p:[
           ["What is (-2)³?",["-6","-8","6","8"],1],
           ["What is (-1)⁵?",["5","1","-5","-1"],3],
@@ -899,7 +903,7 @@ const CURRICULUM = {
           ["Which is greater: (-2)⁴ or (-2)³?",["Cannot compare","They are equal","(-2)³","(-2)⁴"],3],
           ["A negative number raised to an even exponent is always:",["Negative","Zero","Undefined","Positive"],3]
         ]},
-      { t:"Writing & Solving Equations from Words (Kumon G191–G192)", o:"Translate word phrases into one-variable equations, then solve for the unknown.",
+      { parent:5, t:"Writing & Solving Equations from Words (Kumon G191–G192)", o:"Translate word phrases into one-variable equations, then solve for the unknown.",
         p:[
           ["“3 times x equals 4.” Which equation matches?",["3 + x = 4","x + 3 = 4","x ÷ 3 = 4","3x = 4"],3],
           ["“x divided by 3 equals 11/6.” What is x?",["2.5","3.5","6.5","5.5"],3],
@@ -914,7 +918,7 @@ const CURRICULUM = {
           ["“3x equals 3 plus x.” What is x?",["1","3","6","1.5"],3],
           ["“x divided by 3 equals x minus 8.” What is x?",["6","8","24","12"],3]
         ]},
-      { t:"Kumon Session 1: Negative Number Powers & Operations (G56–G60)", o:"One full Kumon session (worksheets G56–G60, 76 problems) on negative-number powers and operations — every problem included, no cherry-picking.",
+      { parent:3, t:"Kumon Session 1: Negative Number Powers & Operations (G56–G60)", o:"One full Kumon session (worksheets G56–G60, 76 problems) on negative-number powers and operations — every problem included, no cherry-picking.",
         p:[
           ["Evaluate: (-1/2)³",["-1/4","-1 1/8","-1/8","-8"],2],
           ["Evaluate: (-1/3)⁴",["1 1/81","-80/81","81","1/81"],3],
@@ -995,7 +999,7 @@ const CURRICULUM = {
           ["Evaluate: 4³-(-5)³",["189","-378","-189","378"],0],
           ["Evaluate: 2⁶-4³",["0","2","1","-1"],0]
         ]},
-      { t:"Kumon Session 2: Negative Number Powers & Operations (G61–G65)", o:"One full Kumon session (worksheets G61–G65, 65 problems) on negative-number powers and operations — every problem included, no cherry-picking.",
+      { parent:3, t:"Kumon Session 2: Negative Number Powers & Operations (G61–G65)", o:"One full Kumon session (worksheets G61–G65, 65 problems) on negative-number powers and operations — every problem included, no cherry-picking.",
         p:[
           ["Evaluate: 12÷3",["5","2","4","3"],2],
           ["Evaluate: 12÷(-3)",["-3","-4","4","-1/4"],1],
@@ -1065,7 +1069,7 @@ const CURRICULUM = {
           ["Evaluate: (-1)⁸÷(-1)⁵",["2","-1","0","-1/2"],1],
           ["Evaluate: (-3)⁴÷(-3)²",["-9","-1/9","9","10"],2]
         ]},
-      { t:"Long Division: Multi-Digit Divisors", o:"Divide a 4- or 5-digit number by a 2- or 3-digit divisor and express the answer as a quotient with remainder (Q R r).",
+      { parent:2, t:"Long Division: Multi-Digit Divisors", o:"Divide a 4- or 5-digit number by a 2- or 3-digit divisor and express the answer as a quotient with remainder (Q R r).",
         p:[
           ["3260 ÷ 56 = ?",["57 R 68","58 R 12","58 R 4","59 R 12"],1],
           ["34570 ÷ 234 = ?",["148 R 172","147 R 172","147 R 62","146 R 172"],1],
@@ -1080,7 +1084,7 @@ const CURRICULUM = {
           ["8100 ÷ 45 = ?",["181 R 0","180 R 45","179 R 45","180 R 0"],3],
           ["62345 ÷ 178 = ?",["350 R 45","351 R 45","350 R 133","349 R 223"],0]
         ]},
-      { t:"Long Division: Zeros in the Quotient", o:"Divide 5-digit numbers by 2-digit divisors where the quotient has a zero in the middle — a classic spot to lose track of place value (e.g. writing 209 instead of 2009).",
+      { parent:2, t:"Long Division: Zeros in the Quotient", o:"Divide 5-digit numbers by 2-digit divisors where the quotient has a zero in the middle — a classic spot to lose track of place value (e.g. writing 209 instead of 2009).",
         p:[
           ["36169 ÷ 18 = ?",["209 R 7","29 R 7","2009 R 25","2009 R 7"],3],
           ["36169 ÷ 12 = ?",["3014 R 1","3104 R 1","314 R 1","3014 R 13"],0],
@@ -1095,7 +1099,7 @@ const CURRICULUM = {
           ["32164 ÷ 32 = ?",["105 R 4","1005 R 36","15 R 4","1005 R 4"],3],
           ["47830 ÷ 23 = ?",["2079 R 13","2709 R 13","279 R 13","2079 R 36"],0]
         ]},
-      { t:"Multiplying Decimals", o:"Multiply two decimal numbers, keeping careful track of where the decimal point lands in the product.",
+      { parent:2, t:"Multiplying Decimals", o:"Multiply two decimal numbers, keeping careful track of where the decimal point lands in the product.",
         p:[
           ["12.4 × 5.6 = ?",["69.44","694.4","6.944","6944"],0],
           ["23.7 × 4.8 = ?",["1137.6","113.76","11.376","11376"],1],
@@ -1110,7 +1114,7 @@ const CURRICULUM = {
           ["123.5 × 3.6 = ?",["4446","44.46","44460","444.6"],3],
           ["234.8 × 2.5 = ?",["58700","587","58.7","5870"],1]
         ]},
-      { t:"Dividing Decimals: Decimal ÷ Whole Number", o:"Divide a decimal dividend by a whole-number divisor, keeping the decimal point in the correct place in the quotient.",
+      { parent:2, t:"Dividing Decimals: Decimal ÷ Whole Number", o:"Divide a decimal dividend by a whole-number divisor, keeping the decimal point in the correct place in the quotient.",
         p:[
           ["361.89 ÷ 18 = ?",["20.105","2.0105","201.05","2010.5"],0],
           ["213.75 ÷ 15 = ?",["1425","14.25","1.425","142.5"],1],
@@ -1125,7 +1129,7 @@ const CURRICULUM = {
           ["2870.84 ÷ 14 = ?",["20506","205.06","2050.6","20.506"],1],
           ["4962.88 ÷ 32 = ?",["1550.9","15509","15.509","155.09"],3]
         ]},
-      { t:"Dividing Decimals by Decimals", o:"Divide a decimal by another decimal (both with 2-3 decimal places). Convert the divisor to a whole number by shifting both decimal points the same number of places, then divide carefully.",
+      { parent:2, t:"Dividing Decimals by Decimals", o:"Divide a decimal by another decimal (both with 2-3 decimal places). Convert the divisor to a whole number by shifting both decimal points the same number of places, then divide carefully.",
         p:[
           ["809.232 ÷ 3.45 = ?",["2345.6","23456","234.56","23.456"],2],
           ["998.085 ÷ 12.65 = ?",["78.9","7890","789","7.89"],0],
@@ -1140,10 +1144,10 @@ const CURRICULUM = {
           ["1680.972 ÷ 19.05 = ?",["8.824","8824","88.24","882.4"],2],
           ["450.1 ÷ 0.625 = ?",["72016","720.16","72.016","7201.6"],1]
         ]},
-      { t:"Combining Like Terms (Kumon G121–G130)", o:"Simplify algebraic expressions by combining terms that share the same variable (adding/subtracting their coefficients) — including negative signs, fraction coefficients, multiple variables in one expression, and x² terms. From Kumon worksheets G121 through G130.",
+      { parent:4, t:"Combining Like Terms (Kumon G121–G130)", o:"Simplify algebraic expressions by combining terms that share the same variable (adding/subtracting their coefficients) — including negative signs, fraction coefficients, multiple variables in one expression, and x² terms. From Kumon worksheets G121 through G130.",
         p:[["Simplify: 3a + 2a",["3a","a","6a","5a"],3],["Simplify: 4m + 2m",["7m","4m","6m","2m"],2],["Simplify: 7m - 2m",["9m","6m","7m","5m"],3],["Simplify: 9x - 4x",["13x","9x","5x","6x"],2],["Simplify: 4x + 7x - 3x",["14x","11x","9x","8x"],3],["Simplify: 2/3a - 1/3a",["a","4/3a","2/3a","1/3a"],3],["Simplify: 4/5a - 2/5a",["4/5a","6/5a","2/5a","7/5a"],2],["Simplify: 5x - 0",["6x","8x","5x","7x"],2],["Simplify: 0 - 3x",["-3x","0","3x","-2x"],0],["Simplify: -1/5a + 2/5a",["-1/5a","-4/5a","1/5a","-3/5a"],2],["Simplify: 4a - 3a",["4a","7a","2a","a"],3],["Simplify: 6a + a",["8a","6a","5a","7a"],3],["Simplify: 4x - x",["6x","5x","3x","4x"],2],["Simplify: -4x + 5x",["-4x","0","-9x","x"],3],["Simplify: -3a + 2a",["-a","-5a","-2a","-3a"],0],["Simplify: -a + 2a",["0","a","-a","-3a"],1],["Simplify: a - a",["2a","3a","a","0"],3],["Simplify: a - 1/2a",["3/2a","5/2a","1/2a","a"],2],["Simplify: 1/3x + 2/3x",["2x","1/3x","-1/3x","x"],3],["Simplify: -2x - x",["-3x","-x","-2x","-4x"],0],["Simplify: 2a - 3a + a",["0","-a","a","-2a"],0],["Simplify: x + x + x",["3x","4x","2x","x"],0],["Simplify: a + a + a + a",["2a","5a","3a","4a"],3],["Simplify: -x - 2x",["-x","-4x","-3x","x"],2],["Simplify: (-2x) - (-5x)",["-2x","3x","-7x","2x"],1],["Simplify: (-9x) - (-8x)",["-17x","-2x","-x","-9x"],2],["Simplify: 2x - (-4x)",["7x","2x","-2x","6x"],3],["Simplify: 7x + (-5x) + (-8x)",["10x","-5x","-6x","2x"],2],["Simplify: -20a - (-22a) + a",["5a","a","3a","2a"],2],["Simplify: 5a - a + 7a - 8a",["3a","19a","11a","4a"],0],["Simplify: 13x - 9x + 7x - 18x",["11x","-7x","-6x","29x"],1],["Simplify: -7x + 3x - 4x - 2x",["-10x","-11x","-8x","-6x"],0],["Simplify: -1.2a + 2.2a - 4.2a + 3.2a",["0","-32/5a","-16/5a","-a"],0],["Simplify: -a/2 - 2/3a",["1/6a","-13/6a","-7/6a","-1/2a"],2],["Simplify: -5x + x/5",["-26/5x","-5x","-24/5x","-29/5x"],2],["Simplify: -a/2 - 3/4a",["1/4a","-1/2a","-9/4a","-5/4a"],3],["Simplify: a - 2/3a + 5/6a",["-1/2a","7/6a","1/3a","13/6a"],1],["Simplify: y/2 + y/3 + y/4",["13/12y","5/6y","7/12y","25/12y"],0],["Simplify: -x + 1/2x - 1/12x",["-5/12x","-7/12x","-19/12x","-1/2x"],1],["Simplify: -x - x/2 + 1/12x",["-29/12x","-19/12x","-3/2x","-17/12x"],3],["Simplify: 3x + 4 + 2",["4x + 6","3x + 2","3x + 6","3x + 4"],2],["Simplify: 3x + 4 - 2",["3x + 4","3x + 6","3x + 2","4x + 2"],2],["Simplify: 3x - 4 + 2",["4x - 2","3x - 6","3x - 4","3x - 2"],3],["Simplify: -3x - 4 - 2",["-4x - 6","-3x - 6","-3x - 4","-3x - 2"],1],["Simplify: 4 + 3x + 2",["3x + 2","3x + 6","3x + 7","3x + 4"],1],["Simplify: 4 - 3x + 2",["-3x + 4","-3x + 6","-3x + 7","-3x + 2"],1],["Simplify: -4 + 3x - 2",["3x - 7","3x - 2","3x - 4","3x - 6"],3],["Simplify: -4 + 3x + 2",["3x - 6","3x - 4","3x - 2","3x - 3"],2],["Simplify: -4 - 3x + 2",["-3x - 3","-3x - 2","-3x - 6","-3x - 4"],1],["Simplify: -4 - 3x - 2",["-3x - 2","-3x - 4","-3x - 7","-3x - 6"],3],["Simplify: -5 - 2x - 8",["-2x - 14","-2x + 3","-2x - 5","-2x - 13"],3],["Simplify: 5x + 3x + 4 + 1",["8x + 3","9x + 5","8x + 4","8x + 5"],3],["Simplify: 5x - 3x + 4 - 1",["2x + 3","3x + 3","2x + 4","2x + 5"],0],["Simplify: -5x + 3x - 4 - 1",["-2x - 5","-2x - 4","-3x - 5","-2x - 3"],0],["Simplify: -5x - 3x - 4 + 1",["-9x - 3","-8x - 3","-8x - 4","-8x - 5"],1],["Simplify: 5x + 4 + 3x + 1",["8x + 5","9x + 5","8x + 3","8x + 4"],0],["Simplify: 5x + 4 - 3x - 1",["2x + 3","2x + 5","2x + 4","3x + 3"],0],["Simplify: 5x - 4 + 3x + 1",["8x - 5","8x - 4","9x - 3","8x - 3"],3],["Simplify: -5x + 4 + 3x + 1",["-2x + 4","-3x + 5","-2x + 3","-2x + 5"],3],["Simplify: -5x + 4 - 3x - 1",["-9x + 3","-8x + 3","-8x + 4","-8x + 5"],1],["Simplify: -5x - 4 - 3x - 1",["-8x - 3","-8x - 4","-9x - 5","-8x - 5"],3],["Simplify: 6x - 5 - 2x + 3",["5x - 2","4x - 5","4x - 2","4x - 8"],2],["Simplify: (-5x) + 3x",["-8x","-3x","-2x","-5x"],2],["Simplify: -7x - 5x",["-12x","-2x","-13x","-7x"],0],["Simplify: -11x - (-9x)",["-3x","-2x","-11x","-20x"],1],["Simplify: 4x - 6 + 8",["4x - 6","4x - 14","4x + 2","5x + 2"],2],["Simplify: -2x + 1 - 4",["-2x + 5","-2x + 1","-2x - 3","-3x - 3"],2],["Simplify: 9x - (-7x) - 4x",["13x","20x","16x","12x"],3],["Simplify: 6x - 4x + 5 - 2",["2x + 3","3x + 3","2x + 7","2x + 5"],0],["Simplify: -6x + 4x - 5 + 2",["-2x - 7","-2x - 3","-2x - 5","-3x - 3"],1],["Simplify: -x + 1/2x + 1/12x",["-1/2x","-7/12x","-17/12x","-5/12x"],3],["Simplify: -1/2x - 4 - 1/3x - 5",["-5/6x + 1","-11/6x - 9","-5/6x - 9","-5/6x - 4"],2],["Simplify: 9 - 2a + 8a",["-2a + 9","6a + 10","6a + 9","-10a + 9"],2],["Simplify: -9 + 2a - 8a",["2a - 9","-6a - 9","-6a - 10","10a - 9"],1],["Simplify: -3a - 5 - 2a",["-6a - 5","-5a - 5","-a - 5","-3a - 5"],1],["Simplify: (-9a) - (-8a) + 3a",["-a","a","-4a","2a"],3],["Simplify: -7x + 4 + 2x - 8",["-5x + 12","-6x - 4","-5x + 4","-5x - 4"],3],["Simplify: -3x - 2 + 5 - 4x",["x + 3","-3x + 3","-8x + 3","-7x + 3"],3],["Simplify: -4 - 5x - 1 - 3x",["-8x - 5","-5x - 5","-2x - 5","-8x - 6"],0],["Simplify: x/2 - 3 - 2/5x + 8",["1/10x - 3","1/10x + 5","11/10x + 5","1/10x - 11"],1],["Simplify: -x/3 - 2 + x/4 - 4",["-1/12x - 2","-1/12x - 6","-13/12x - 6","-1/12x + 2"],1],["Simplify: -x + 1/4 + 3/7x - 5/6",["-4/7x - 7/12","-4/7x + 1/4","-4/7x + 13/12","-11/7x - 7/12"],0],["Simplify: 2a + 5b + 4a",["6a + 5b","7a + 5b","-2a + 5b","2a + 5b"],0],["Simplify: 5a + 3b + 3a",["5a + 3b","9a + 3b","8a + 3b","2a + 3b"],2],["Simplify: 5a + 4b + 2a",["8a + 4b","5a + 4b","7a + 4b","3a + 4b"],2],["Simplify: 4a + b + a",["3a + b","6a + b","5a + b","4a + b"],2],["Simplify: 4a + 2b + 3a",["a + 2b","7a + 2b","4a + 2b","8a + 2b"],1],["Simplify: 4a - 2b + 3a",["a - 2b","8a - 2b","4a - 2b","7a - 2b"],3],["Simplify: 8a - 2b + 3a",["12a - 2b","8a - 2b","11a - 2b","5a - 2b"],2],["Simplify: 8a + 2b - 3a",["8a + 2b","5a + 2b","6a + 2b","11a + 2b"],1],["Simplify: 5a + 2b - 3a",["3a + 2b","2a + 2b","5a + 2b","8a + 2b"],1],["Simplify: 4a - b + a",["6a - b","4a - b","3a - b","5a - b"],3],["Simplify: 5a + 4b - 3a",["3a + 4b","8a + 4b","2a + 4b","5a + 4b"],2],["Simplify: 4a - 2b + 3a (again)",["7a - 2b","4a - 2b","8a - 2b","a - 2b"],0],["Simplify: 4a + 5b + 3a + 4b",["7a + 9b","8a + 9b","7a + 5b","7a + b"],0],["Simplify: 4a + 5b + 3a - 4b",["7a + 5b","7a + b","7a + 9b","8a + b"],1],["Simplify: 4a + 5b - 3a + 4b",["a + 5b","2a + 9b","a + b","a + 9b"],3],["Simplify: 4a + 5b - 3a - 4b",["a + 9b","2a + b","a + 5b","a + b"],3],["Simplify: 4a - 5b - 3a + 4b",["2a - b","a - 9b","a - b","a - 5b"],2],["Simplify: 4a - 5b + 3a - 4b",["7a - 5b","7a - b","8a - 9b","7a - 9b"],3],["Simplify: 4a - 5b - 3a - 4b",["2a - 9b","a - b","a - 9b","a - 5b"],2],["Simplify: -4a + 5b + 3a + 4b",["-a + b","-a + 9b","-2a + 9b","-a + 5b"],1],["Simplify: -4a - 5b + 3a + 4b",["-a - 9b","-a - b","-2a - b","-a - 5b"],1],["Simplify: -4a + 5b + 3a - 4b",["-a + 5b","-a + b","-2a + b","-a + 9b"],1],["Simplify: 3a + b + 5a + 2b",["8a - b","9a + 3b","8a + b","8a + 3b"],3],["Simplify: 3a - b + 5a + 2b",["9a + b","8a + b","8a - 3b","8a - b"],1],["Simplify: 3a + b - 5a + 2b",["-a + 3b","-2a - b","-2a + 3b","-2a + b"],2],["Simplify: -3a + b + 5a + 2b",["2a + b","2a + 3b","2a - b","a + 3b"],1],["Simplify: -3a + b + 5a - 2b",["a - b","2a + 3b","2a + b","2a - b"],3],["Simplify: -3a - b + 5a + 2b",["2a - 3b","a + b","2a + b","2a - b"],2],["Simplify: -3a + b - 5a + 2b",["-9a + 3b","-8a - b","-8a + 3b","-8a + b"],2],["Simplify: -3a - b - 5a - 2b",["-8a - 3b","-9a - 3b","-8a - b","-8a + b"],0],["Simplify: 3a - b - 5a + 2b",["-2a - 3b","-2a + b","-2a - b","-a + b"],1],["Simplify: 3a - b + 5a - 2b",["8a + b","8a - b","9a - 3b","8a - 3b"],3],["Simplify: 3a + 2b + 5a",["3a + 2b","9a + 2b","-2a + 2b","8a + 2b"],3],["Simplify: 3x - 5y + 4y + 2x",["x - y","3x - y","5x - y","6x - y"],2],["Simplify: 9x - 11 - 2x + 4",["8x - 7","7x - 7","7x - 15","7x - 11"],1],["Simplify: 2a + 3x - 4x - 5a",["7a - x","-2a - x","-3a - x","2a - x"],2],["Simplify: 4a - 5c + 3a - c",["8a - 6c","7a - 5c","7a - 4c","7a - 6c"],3],["Simplify: 3a + b - (-2b)",["4a + 3b","3a + b","3a + 3b","3a - b"],2],["Simplify: 3x - 5y - (-3x)",["3x - 5y","6x - 5y","7x - 5y","-5y"],1],["Simplify: 2x - 3y + x - 4y",["3x - 7y","4x - 7y","3x - 3y","3x + y"],0],["Simplify: 4a - 2x + 7a - x",["11a - x","11a - 3x","11a - 2x","12a - 3x"],1],["Simplify: 2a - 4b + 3b + 3a",["-a - b","6a - b","5a - b","2a - b"],2],["Simplify: -1/3a + 1/4b + a - b",["2/3a + 1/4b","2/3a + 5/4b","2/3a - 3/4b","-1/3a - 3/4b"],2],["Simplify: a + b - 3/4a - 1/4b",["1/4a + b","5/4a + 3/4b","1/4a + 3/4b","1/4a + 5/4b"],2],["Simplify: 4a + a",["6a","5a","3a","4a"],1],["Simplify: -2/3a + a",["7/3a","-2/3a","1/3a","-5/3a"],2],["Simplify: a + (-2a)",["-a","a","3a","0"],0],["Simplify: (-4x) + 5x",["0","-4x","-9x","x"],3],["Simplify: -x/2 + 1/3x",["-1/6x","-5/6x","-1/2x","-7/6x"],0],["Simplify: 1/4a - 2/5a",["1/4a","13/20a","17/20a","-3/20a"],3],["Simplify: 2x - 5x + 3x",["0","x","-3x","-6x"],0],["Simplify: 2/9x - 3/5x + 1/3x",["-17/45x","-32/45x","43/45x","-2/45x"],3],["Simplify: 4a - 2b + 5b",["4a + 3b","4a - 7b","5a + 3b","4a - 2b"],0],["Simplify: a + b - a + b",["0","2b","b","a + 2b"],1],["Simplify: 5x + 10 - 5x",["10x + 10","10","5x + 10","x + 10"],1],["Simplify: x - 3a - 2x + 5a",["2a","-8a - x","2a - x","-3a - x"],2],["Simplify: 1/3a - 5/6b + 1/2a",["-1/6a - 5/6b","11/6a - 5/6b","1/3a - 5/6b","5/6a - 5/6b"],3],["Simplify: 5/8a - 1/5b - a + b",["5/8a + 4/5b","-3/8a + 4/5b","-3/8a - 6/5b","-3/8a - 1/5b"],1],["Simplify: 2/3a - 1/5b - a + b",["-1/3a + 4/5b","-1/3a - 6/5b","2/3a + 4/5b","-1/3a - 1/5b"],0],["Simplify: 1/2a - b + 1/3a + 2/3b",["11/6a - 1/3b","5/6a - 5/3b","5/6a - b","5/6a - 1/3b"],3],["Simplify: 3a + a/2",["7/2a","5/2a","9/2a","3a"],0],["Simplify: x/3 + 2x",["7/3x","10/3x","-5/3x","1/3x"],0],["Simplify: 5a - 3/2a",["5a","9/2a","7/2a","13/2a"],2],["Simplify: -a - a/2",["-1/2a","-3/2a","-a","-5/2a"],1],["Simplify: -5/3a + 2/3a",["-2a","-a","-7/3a","-5/3a"],1],["Simplify: x/2 - 7/3x",["-5/6x","-11/6x","17/6x","1/2x"],1],["Simplify: 4x + 1/5x",["21/5x","19/5x","4x","26/5x"],0],["Simplify: 5x - x + x/5",["21/5x","4x","19/5x","26/5x"],0],["Simplify: -2a - 1/3a + b",["-7/3a + b","-10/3a + b","-7/3a","-7/3a - b"],0],["Simplify: 7/4a - b + 1/2a",["13/4a - b","9/4a - b","7/4a - b","5/4a - b"],1],["Simplify: 10/3a - 3a - a/3",["0","2/3a","a","1/3a"],0],["Simplify: 9 - 5a - 20 - a/2",["-5a - 11","-9/2a - 11","-11/2a - 10","-11/2a - 11"],3],["Simplify: 1/5a - 2b - a + 1/4b",["1/5a - 7/4b","-4/5a - 2b","-4/5a - 7/4b","-4/5a - 9/4b"],2],["Simplify: -8/3x - 5y - x/2 + 4y",["-19/6x - 9y","-19/6x - 5y","-25/6x - y","-19/6x - y"],3],["Simplify: 3x - 1/6y - y - 2/9x",["29/9x - 7/6y","25/9x - 7/6y","3x - 7/6y","34/9x - 7/6y"],1],["Simplify: -5/4x - 2/3 + 3/2x - 3/4",["1/4x - 2/3","1/4x - 17/12","1/4x + 1/12","-3/4x - 17/12"],1],["Simplify: a + 4b - 3a - 2b",["-2a + 2b","-2a + 4b","-2a + 6b","-a + 2b"],0],["Simplify: -2a + 13b + 7a - 8b",["4a + 5b","5a + 13b","5a + 5b","5a + 21b"],2],["Simplify: a - b + b - a",["a","3a","2a","0"],3],["Simplify: 3x - (-2y) + 12x - 38y",["15x - 36y","16x - 36y","15x + 2y","15x + 40y"],0],["Simplify: x - 3y + 2x - 4y",["3x + y","4x - 7y","3x - 3y","3x - 7y"],3],["Simplify: x - 3y - x + 4y",["-3y","x + y","-7y","y"],3],["Simplify: 5x + y + 3 + 7x + 2y + 7",["12x + 3y + 10","12x + 3y - 4","12x + 3y + 3","13x + 3y + 10"],0]],
         a:[["Simplify: -x + 4y - 3 - 3y + 4x + 4",["3x + y + 1","3x + y - 7","3x + y - 3","2x + y + 1"],0],["Simplify: 5x + y + 3 + x - 2y - 5",["6x - y + 3","6x - y + 8","6x - y - 2","7x - y - 2"],2],["Simplify: 5a - 3b - 4 + 7a + 3b + 9",["12a - 4","12a + 5","12a - 13","13a + 5"],1],["Simplify: 6x² - 3x - 2x² + 5x",["4x² + 2x","4x² - 8x","5x² + 2x","4x² - 3x"],0],["Simplify: x² + 2x + 3 + 2x² + 4x + 5",["3x² + 6x + 8","3x² + 6x + 3","4x² + 6x + 8","3x² + 6x - 2"],0],["Simplify: x² - 2x - 3 + 2x² + 4x + 5",["4x² + 2x + 2","3x² + 2x - 8","3x² + 2x - 3","3x² + 2x + 2"],3],["Simplify: x² + 3x + 4x² + 5 - 6x",["5x² - 3x + 5","5x² + 3x + 5","6x² - 3x + 5","5x² + 9x + 5"],0],["Simplify: x² + 3x - 5 - x² + 4x + 4",["7x - 9","7x - 1","x² + 7x - 1","7x - 5"],1],["Simplify: 3x² - 5x + 2 - 3x² + 4x",["x² - x + 2","-5x + 2","-x + 2","-9x + 2"],2],["Simplify: 2a + 3b - 5c - c + 6b - 8a",["10a + 9b - 6c","-6a + 9b - 6c","2a + 9b - 6c","-5a + 9b - 6c"],1],["Simplify: 2x - 6y + 0.8y + 3z - 4.1x - 2.5z",["-21/10x - 26/5y + 3z","-11/10x - 26/5y + 1/2z","-21/10x - 26/5y + 1/2z","-21/10x - 26/5y + 11/2z"],2],["Simplify: -1/2a + 5a - 3a",["3/2a","9/2a","15/2a","1/2a"],0],["Simplify: -3a + b + 9a - 4b",["6a + 5b","6a + b","6a - 3b","5a - 3b"],2],["Simplify: -5x - y + 3 + 7x + 2y - 7",["2x + y + 3","2x + y - 4","2x + y + 10","x + y - 4"],1],["Simplify: -3x - (-2y) + 12x - 38",["9x + 2y","9x + 2y - 38","9x + 2y + 38","8x + 2y - 38"],1],["Simplify: -a/5 - 2b - a - b/4",["-6/5a - 9/4b","-11/5a - 9/4b","-6/5a - 7/4b","-6/5a - 2b"],0],["Simplify: a - 1/2b + 1/3c - 1/5b - 2/3c - 1/9a",["10/9a - 7/10b - 1/3c","8/9a - 7/10b - 1/3c","a - 7/10b - 1/3c","17/9a - 7/10b - 1/3c"],1],["Simplify: 0.5a² - 0.6a - 1.6a² + 7.2a",["-11/10a² - 3/5a","-11/10a² - 39/5a","-11/10a² + 33/5a","-1/10a² + 33/5a"],2],["Simplify: -3/8xy - 5/4xy",["-3/8xy","-13/8xy","7/8xy","-21/8xy"],1],["Simplify: xy/3 + 5/6xy - xy/2",["2/3xy","7/6xy","5/3xy","8/3xy"],0],["Simplify: 2ab + 1/2ab - 5/4ab",["5/2ab","5/4ab","9/4ab","15/4ab"],1],["Simplify: 1/2xy - 3xy - z",["-5/2xy","-z - 3/2xy","z - 5/2xy","-z - 5/2xy"],3],["Simplify: 1/2xy + 2yz - 3xy",["-3/2xy + 2yz","7/2xy + 2yz","1/2xy + 2yz","-5/2xy + 2yz"],3],["Simplify: x² - 6x + 4 - 3x² + 4x",["-2x² - 6x + 4","-2x² - 2x + 4","-x² - 2x + 4","-2x² - 10x + 4"],1],["Simplify: 1/3x² - 1/2x - 1/5x² + 1/8x - 1/15x²",["16/15x² - 3/8x","2/15x² - 3/8x","1/5x² - 3/8x","1/15x² - 3/8x"],3]]},
-      { t:"Distributive Property (Kumon G141–G144)", o:"Multiply a number (including negative and fraction multipliers) into every term inside a set of parentheses, then combine any like terms that result. Builds directly on Combining Like Terms. From Kumon worksheets G141 through G144.",
+      { parent:4, t:"Distributive Property (Kumon G141–G144)", o:"Multiply a number (including negative and fraction multipliers) into every term inside a set of parentheses, then combine any like terms that result. Builds directly on Combining Like Terms. From Kumon worksheets G141 through G144.",
         p:[["Simplify: 4(2a + b)",["8a","8a - 4b","8a + 4b","8a + b"],2],["Simplify: 3(2a + 5b)",["6a + 15b","6a","6a - 15b","6a + 5b"],0],["Simplify: 2(a - 3b)",["2a - 6b","2a","2a + 6b","2a - 3b"],0],["Simplify: 5(2a - 4b)",["10a - 4b","10a","10a + 20b","10a - 20b"],3],["Simplify: 3(-4a + b)",["-12a + b","-12a","-12a - 3b","-12a + 3b"],3],["Simplify: 3(-a + b)",["-3a - 3b","-3a","-3a + b","-3a + 3b"],3],["Simplify: 4(-a - b)",["-4a + 4b","-4a - b","-4a","-4a - 4b"],3],["Simplify: 2(3a - 5b + 1)",["6a - 10b - 2","6a - 10b","6a - 5b + 1","6a - 10b + 2"],3],["Simplify: 6(x/2 + 1/3)",["3x + 1/3","3x","3x + 2","3x - 2"],2],["Simplify: 12(1/3x - 1/4y)",["4x + 3y","4x","4x - 1/4y","4x - 3y"],3],["Simplify: 2/3(-2/3x - 3/2)",["-4/9x - 1","-4/9x + 1","-4/9x - 3/2","-4/9x"],0],["Simplify: -5(a - 3)",["-5a - 15","-5a","-5a + 15","-5a - 3"],2],["Simplify: -6(x - 12)",["-6x - 12","-6x + 72","-6x","-6x - 72"],1],["Simplify: -2(x + 2y)",["-2x","-2x + 2y","-2x + 4y","-2x - 4y"],3],["Simplify: -7(x + y)",["-7x + 7y","-7x - 7y","-7x + y","-7x"],1],["Simplify: -15(-5x + 9)",["75x + 135","75x","75x + 9","75x - 135"],3],["Simplify: -5(3x - y + 2z)",["-15x + 5y","-15x + 5y + 10z","-15x - y + 2z","-15x + 5y - 10z"],3],["Simplify: -4(-a/2 + 1/4)",["2a + 1","2a","2a + 1/4","2a - 1"],3],["Simplify: -6(-1/3x - 1/15)",["2x + 2/5","2x - 2/5","2x","2x - 1/15"],0],["Simplify: -12(1/3x - 3/4y)",["-4x","-4x - 9y","-4x + 9y","-4x - 3/4y"],2],["Simplify: -15(-3a/5 - 2/3)",["9a","9a - 2/3","9a - 10","9a + 10"],3],["Simplify: -1/3(9x - 6y - 3)",["-3x + 2y","-3x - 6y - 3","-3x + 2y - 1","-3x + 2y + 1"],3],["Simplify: 3a - 4(a - 2b)",["-a - 8b","-a + 8b","-a - 2b","-a"],1],["Simplify: 5a - 2(a - 3b)",["3a - 3b","3a - 6b","3a + 6b","3a"],2],["Simplify: 3a + 2(-4a + 3b)",["-5a + 6b","-5a + 3b","-5a - 6b","-5a"],0],["Simplify: 3a - 2(4a - 3b)",["-5a","-5a + 6b","-5a - 6b","-5a - 3b"],1],["Simplify: 3a - 2(4a + 5b)",["-5a","-5a + 5b","-5a + 10b","-5a - 10b"],3],["Simplify: 3a - 2(-4a + 5b)",["11a - 10b","11a + 5b","11a","11a + 10b"],0],["Simplify: x - 2(3x + 1)",["-5x","-5x + 2","-5x - 2","-5x + 1"],2],["Simplify: x + 2(-3x + 1)",["-5x","-5x - 2","-5x + 2","-5x + 1"],2],["Simplify: 3x + 2(1 - x)",["x + 2","2x + 2","3x + 2","5x + 2"],0],["Simplify: 3(3x + 1) + 2(x - 5)",["11x - 7","11x + 3","11x + 13","11x - 2"],0],["Simplify: 6(x - 5) + 2(x - 2)",["8x - 26","8x - 30","8x - 32","8x - 34"],3],["Simplify: 3(3x - 1) + 2(x + 5)",["11x + 2","11x - 13","11x - 3","11x + 7"],3],["Simplify: 3(2x - 5) + 2(x + 2)",["8x - 19","8x - 11","8x - 13","8x - 15"],1],["Simplify: 2(x - 2) + (x - 1)",["3x - 5","3x - 3","3x - 4","5x - 5"],0],["Simplify: 5(x - 5) + 3(x - 3)",["8x - 16","8x - 28","8x - 34","8x - 25"],2],["Simplify: 3(2x - 5) + 2(x + 1)",["8x - 15","8x - 17","8x - 13","8x - 14"],2],["Simplify: -4(3x + 2) + 2(6x + 4)",["0","-4","-8","-16"],0],["Simplify: 2(x/2 - 2) + 3(x + 1)",["4x - 1","4x - 7","4x - 3","4x - 4"],0],["Simplify: 5(x + 3) - 3(x + 2)",["2x + 9","2x + 21","2x + 17","2x + 15"],0],["Simplify: 5(x + 3) - 3(x - 5)",["2x + 30","2x","2x + 15","2x + 10"],0],["Simplify: 5(2x - 3) - 3(3x + 1)",["x - 18","x - 15","x - 12","x - 14"],0],["Simplify: 2(3x + 1) - 3(2x + 3)",["2","5","-7","11"],2],["Simplify: 2(4x - 3) - 3(2x - 3)",["2x - 15","2x - 6","2x + 3","2x - 9"],2]],
         a:[["Simplify: 6(x/3 + 1) - 4(2x - 3)",["-6x + 3","-6x + 6","-6x + 18","-6x - 6"],2],["Simplify: -4(3x - 2) - 2(6x - 4)",["-24x + 16","-24x","-24x + 8","-24x + 4"],0],["Simplify: 2x - 3(x - 5) + 2(x - 3)",["x + 12","x + 21","x + 15","x + 9"],3],["Simplify: (4x - 3) - 2(3x + 1)",["-2x - 2","-2x - 5","-2x - 3","-2x - 1"],1],["Simplify: 2(4x - 3) - 3(2x - 3) [II]",["2x - 15","2x - 6","2x + 3","2x - 9"],2],["Simplify: -4(3x + 2) - 2(6x + 4)",["-24x","-24x - 8","-24x - 16","-24x - 4"],2],["Simplify: -(7x - 2) + 5(2x - 1)",["3x + 7","3x - 3","3x + 2","3x + 1"],1],["Simplify: -(3x - 4) - 10(x/5 + 1)",["-5x + 14","-5x + 5","-5x - 6","-5x + 4"],2],["Simplify: 2(x + 3) + 3(2x + 4) + 4(3x - 5)",["20x - 2","20x + 18","20x + 38","20x + 13"],0],["Simplify: 3(2x - 1) - 4(3x + 2) + 5(x + 4)",["-x - 7","-x + 9","-x - 31","-x - 11"],1],["Simplify: 3(a + 4b)",["3a","3a + 4b","3a - 12b","3a + 12b"],3],["Simplify: 3(-4a + 6)",["-12a + 6","-12a - 18","-12a","-12a + 18"],3],["Simplify: -2(-x - 2y)",["2x - 4y","2x - 2y","2x + 4y","2x"],2],["Simplify: -15(-2a/5 - 4/3)",["6a - 4/3","6a","6a + 20","6a - 20"],2],["Simplify: -1/2(2x - 10y - 3)",["-x + 5y - 3/2","-x - 10y - 3","-x + 5y","-x + 5y + 3/2"],3],["Simplify: (x - 7y)(-2)",["-2x - 14y","-2x + 14y","-2x - 7y","-2x"],1],["Simplify: (a/3 - b/6) × 12",["4a - 2b","4a - 1/6b","4a + 2b","4a"],0],["Simplify: (a/4 - b/24) × (-36)",["-9a + 3/2b","-9a - 3/2b","-9a","-9a - 1/24b"],0],["Simplify: 3x + 2(1 - x) [II]",["5x + 2","x + 2","3x + 2","2x + 2"],1],["Simplify: -(3x - 4) - 10(x/5 - 1)",["-5x - 6","-5x + 3","-5x + 4","-5x + 14"],3],["Simplify: 1/4(12x - 16) - 1/8(16x - 64)",["x - 12","x + 4","x - 4","x - 68"],1],["Simplify: 1/2(2x + 1) - 2(x/4 - 1)",["1/2x + 1/2","1/2x - 1/2","1/2x + 5/2","1/2x - 3/2"],2],["Simplify: -1/4(5x - 3y) + y",["-5/4x - 1/4y","-5/4x - 2y","-5/4x + 3/4y","-5/4x + 7/4y"],3],["Simplify: 1/2(a + 2b) - 1/3(3a - b)",["-1/2a + 4/3b","-1/2a","-1/2a + 2/3b","-1/2a + b"],0],["Simplify: 3x - 6(x/2 + 1/3) - 4(x - 1)",["-4x - 6","-4x - 2","-4x + 2","-4x - 3"],2]]}
     ]}
@@ -1913,18 +1917,31 @@ function subjectHtml(){
     return '<button class="area-tab '+(a===area?"active":"")+'" data-act="open-area" data-subj="'+subj+'" data-area="'+a+'">'+esc(cur.areas[a].name)+'</button>';
   }).join("");
 
-  let nodes = topics.map(function(t,i){
-    const key = topicKey(subj,area,i);
-    const prog = getProgress(key);
+  /* Topics with a `parent` are extra practice sets (Kumon, long division, ...) nested under a main topic. */
+  const kids = {}, mains = [];
+  topics.forEach(function(t,i){ if(t.parent!=null) (kids[t.parent]=kids[t.parent]||[]).push(i); else mains.push(i); });
+  const selIdx = (state.area===area) ? state.idx : null;
+  const selParent = (selIdx!=null && topics[selIdx] && topics[selIdx].parent!=null) ? topics[selIdx].parent : null;
+  function trailNodeHtml(i, dotLabel, isSub, extra){
+    const t = topics[i];
+    const prog = getProgress(topicKey(subj,area,i));
     const unlocked = isUnlocked(subj,area,i);
-    const selected = state.idx===i && state.area===area;
-    let statusCls = prog.status==="mastered" ? "mastered" : (prog.status==="pending_review" ? "pending" : "");
-    let dot = prog.status==="mastered" ? "★" : (prog.status==="pending_review" ? "…" : (unlocked ? (i+1) : "🔒"));
-    return '<div style="position:relative">'
-      + (i<topics.length-1 ? '<div class="connector"></div>' : '')
-      + '<button class="node '+statusCls+' '+(selected?"selected":"")+' '+(unlocked?"":"locked")+'" '
+    const statusCls = prog.status==="mastered" ? "mastered" : (prog.status==="pending_review" ? "pending" : "");
+    const dot = prog.status==="mastered" ? "\u2605" : (prog.status==="pending_review" ? "\u2026" : (unlocked ? dotLabel : "\uD83D\uDD12"));
+    const state1 = prog.status==="mastered" ? "Mastered \u00b7 "+fmtPct(prog.bestPct) : prog.status==="pending_review" ? "Awaiting review" : unlocked ? "Ready" : "Locked";
+    return '<button class="node '+statusCls+' '+(selIdx===i?"selected":"")+' '+(unlocked?"":"locked")+' '+(isSub?"node-sub":"")+'" '
       + (unlocked ? 'data-act="open-topic" data-subj="'+subj+'" data-area="'+area+'" data-idx="'+i+'"' : 'disabled')
-      + '><div class="dot">'+dot+'</div><div class="info"><b>'+esc(t.t)+'</b><small>'+(prog.status==="mastered"?"Mastered · "+fmtPct(prog.bestPct):prog.status==="pending_review"?"Awaiting review":unlocked?"Ready":"Locked")+'</small></div></button>'
+      + '><div class="dot">'+dot+'</div><div class="info"><b>'+esc(t.t)+'</b><small>'+state1+(extra?" \u00b7 "+extra:"")+'</small></div></button>';
+  }
+  let nodes = mains.map(function(i,n){
+    const sub = kids[i] || [];
+    const open = sub.length && (selIdx===i || selParent===i);
+    const done = sub.filter(function(k){ return getProgress(topicKey(subj,area,k)).status==="mastered"; }).length;
+    const extra = sub.length ? (sub.length+" more practice set"+(sub.length===1?"":"s")+" ("+done+" mastered)") : "";
+    return '<div style="position:relative">'
+      + (n<mains.length-1 ? '<div class="connector"></div>' : '')
+      + trailNodeHtml(i, n+1, false, open ? "" : extra)
+      + (open ? '<div class="sub-trail">'+sub.map(function(k){ return trailNodeHtml(k, "\u2022", true, ""); }).join("")+'</div>' : '')
       + '</div>';
   }).join("");
 
@@ -1957,6 +1974,7 @@ function topicPanelHtml(subj,area,idx){
   const prog = getProgress(key);
   const accent = subjectAccentVar(subj);
   let body = '<div class="topic-panel" style="--accent:'+accent+'">';
+  if(topic.parent!=null) body += '<div class="empty-note" style="margin-bottom:6px">Part of: <b>'+esc(getTopics(subj,area)[topic.parent].t)+'</b></div>';
   body += '<h2 class="display">'+esc(topic.t)+'</h2>';
   body += '<div class="objective-box" style="--accent:'+accent+'"><b>Learning objective:</b> '+esc(topic.o)+'</div>';
 
