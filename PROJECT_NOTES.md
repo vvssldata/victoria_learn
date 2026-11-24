@@ -173,3 +173,11 @@ before pushing — see `test_algebra_topics.js` in the scratchpad.
 - `12d4dd4` Add intensity to the Activity Log
 - `82cbf30` Auto-save every practice/assessment result automatically
 - `f47194b` Add the 1-hour 6th Grade Math Test with per-topic scoring
+
+## Kumon negative-number sessions, grouping, one-page quiz (2026-11)
+
+- **Grouping:** topics with `parent:<index>` are shown nested under that main topic on the trail; `hidden:true` hides a topic but keeps its slot (indexes and saved progress are never changed). Main topics: 7 in Pre-Algebra.
+- **Kumon G book map (Chinese edition):** G36-50 add/subtract signed numbers, G51-60 multiplication/powers, G61-70 division, G71-80 mixed ops I, G81-89+ mixed ops 2. Page = 2n-1 (a) and 2n (b) in `Kumon G.pdf`. The `Kumon G_answer` PDF is a different edition and does NOT match these worksheets.
+- **Full sessions now in the app (every problem, answers computed with exact fractions):** Session 1 G56-60, Session 2 G61-65, Session 3 G51-55 (92 problems), Session 4 G66-70 (50), Session 5 G71-75 (51), Session 6 G76-80 (54), Session 7 G81-85 (62), plus G191-192 equations from words (26, rebuilt in place at index 10). The early 4+6 samples for G61-63 and G65 (indexes 8, 9) are hidden because Session 2 covers them fully. Not yet done: G86+ and G36-50.
+- **Quiz changes (both apps):** "All on one page" layout, auto-saved drafts with Resume, missed-question numbers saved per set (`progress.missed`, `progress.draft`) with "Retry only these", and the missed numbers go in the sheet's Notes column. Subset retries are scored as practice and never count toward mastery.
+- **Time analysis:** a "Time by subject" panel under the calendar reads the Minutes column of each Progress Sheet live.
