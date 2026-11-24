@@ -207,6 +207,15 @@ table.tt td{padding:9px 10px;border-bottom:1px solid var(--line);}
 .cal-cell.cal-busy{background:var(--good);color:#fff;}
 .cal-legend{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-soft);margin-top:10px;}
 .cal-legend-dot{width:8px;height:8px;border-radius:50%;background:var(--good);display:inline-block;}
+.cal-cell[data-act="cal-day"]{cursor:pointer;}
+.cal-cell.cal-sel{box-shadow:inset 0 0 0 2px var(--ink);}
+.time-analysis{margin-top:16px;padding-top:12px;border-top:1px solid var(--surface-2);}
+.time-sub{display:flex;justify-content:space-between;font-size:13px;margin:6px 0 8px;color:var(--ink-soft);}
+.time-row{display:grid;grid-template-columns:minmax(70px,28%) 1fr auto;align-items:center;gap:8px;font-size:13px;margin:5px 0;}
+.time-bar{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;}
+.time-bar i{display:block;height:100%;background:var(--chart);border-radius:99px;}
+.time-val{font-size:12px;color:var(--ink-soft);}
+.time-empty{font-size:13px;color:var(--ink-soft);padding:6px 0;}
 </style>
 </head>
 <body>
@@ -1259,10 +1268,108 @@ function saveLocal(){
   try{ localStorage.setItem(LOCAL_KEY, JSON.stringify({progress:progressData, settings, tasks, activityLog})); }catch(e){}
 }
 
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/120T9AJJTgE9pzX21jtseQQj1PO733ubD_MxHDZVJ86o/export?format=csv";
 async function initStore(){
   loadLocal();
   render();
+  loadSheetTime();
 }
+
+/* ---------- Time analysis (daily / weekly / monthly per subject, from the Progress Sheet) ---------- */
+let sheetTime = null;            // [{ts, subject, mins}] parsed from the sheet; null = not loaded
+let calSel = null;               // selected calendar day {y,m,d}
+let timeView = "day";
+const SHEET_TIME_KEY = LOCAL_KEY + "_sheetTime";
+function parseCsvText(text){
+  const rows = []; let row = [], cell = "", q = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){ cell+='"'; i++; } else q=false; } else cell+=c; }
+    else if(c==='"') q=true;
+    else if(c===","){ row.push(cell); cell=""; }
+    else if(c==="\n"||c==="\r"){ if(c==="\r"&&text[i+1]==="\n") i++; row.push(cell); rows.push(row); row=[]; cell=""; }
+    else cell+=c;
+  }
+  if(cell!==""||row.length){ row.push(cell); rows.push(row); }
+  return rows;
+}
+function sheetRowsToTime(rows){
+  const out = [];
+  rows.forEach(function(r){
+    const m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec((r[0]||"").trim());
+    const mins = parseFloat(r[6]);
+    if(!m || !(mins>0)) return;
+    let subject = (r[1]||"").trim() || "Other";
+    if(subject==="Pre-Algebra") subject = "Math";
+    out.push({ ts: new Date(+m[3], +m[1]-1, +m[2]).getTime(), subject: subject, mins: mins });
+  });
+  return out;
+}
+function loadSheetTime(){
+  try{ const c = localStorage.getItem(SHEET_TIME_KEY); if(c) sheetTime = JSON.parse(c); }catch(e){}
+  if(typeof fetch!=="function") return;
+  fetch(SHEET_CSV_URL, { cache:"no-store" })
+    .then(function(r){ if(!r.ok) throw new Error("http "+r.status); return r.text(); })
+    .then(function(t){
+      sheetTime = sheetRowsToTime(parseCsvText(t));
+      try{ localStorage.setItem(SHEET_TIME_KEY, JSON.stringify(sheetTime)); }catch(e){}
+      if(state.screen==="home") render();
+    })
+    .catch(function(){});
+}
+/* Sheet data when available; otherwise this device's own attempts + logged activities. */
+function timeEntries(){
+  if(sheetTime) return sheetTime;
+  const list = [];
+  allAttempts().forEach(function(a){
+    const subj = String(a.key||"").split("-")[0];
+    const name = CURRICULUM[subj] ? (CURRICULUM[subj].name==="Pre-Algebra" ? "Math" : CURRICULUM[subj].name) : "Other";
+    list.push({ ts:a.ts, subject:name, mins:(a.durationSec||0)/60 });
+  });
+  activityLog.forEach(function(a){ list.push({ ts:a.ts, subject:a.subject||"Other", mins:a.minutes||0 }); });
+  return list;
+}
+function getCalSel(){
+  if(!calSel){ const n=new Date(); calSel={ y:n.getFullYear(), m:n.getMonth(), d:n.getDate() }; }
+  return calSel;
+}
+function sumBySubject(entries, from, to){ // from inclusive, to exclusive (ms)
+  const t = {};
+  entries.forEach(function(e){ if(e.ts>=from && e.ts<to) t[e.subject] = (t[e.subject]||0) + e.mins; });
+  return t;
+}
+function fmtMins(m){ m=Math.round(m); return m>=60 ? Math.floor(m/60)+"h "+(m%60)+"m" : m+" min"; }
+function timeAnalysisHtml(){
+  const sel = getCalSel(), cm = getCalMonth();
+  const day0 = new Date(sel.y, sel.m, sel.d);
+  const wk0 = new Date(sel.y, sel.m, sel.d - day0.getDay());
+  const ranges = {
+    day:   { from:day0.getTime(), to:new Date(sel.y,sel.m,sel.d+1).getTime(),
+             label:day0.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"}) },
+    week:  { from:wk0.getTime(), to:new Date(wk0.getFullYear(),wk0.getMonth(),wk0.getDate()+7).getTime(),
+             label:"Week of "+wk0.toLocaleDateString(undefined,{month:"short",day:"numeric"}) },
+    month: { from:new Date(cm.y,cm.m,1).getTime(), to:new Date(cm.y,cm.m+1,1).getTime(),
+             label:new Date(cm.y,cm.m,1).toLocaleDateString(undefined,{month:"long",year:"numeric"}) }
+  };
+  const r = ranges[timeView] || ranges.day;
+  const totals = sumBySubject(timeEntries(), r.from, r.to);
+  const subjects = Object.keys(totals).sort(function(a,b){ return totals[b]-totals[a]; });
+  const grand = subjects.reduce(function(s,k){ return s+totals[k]; }, 0);
+  const max = subjects.length ? totals[subjects[0]] : 0;
+  const tabs = ["day","week","month"].map(function(v){
+    return '<button class="btn btn-sm '+(v===timeView?"":"btn-ghost")+'" data-act="time-view" data-view="'+v+'" aria-pressed="'+(v===timeView)+'">'+{day:"Daily",week:"Weekly",month:"Monthly"}[v]+'</button>';
+  }).join("");
+  const rowsHtml = subjects.length ? subjects.map(function(k){
+    return '<div class="time-row"><span class="time-name">'+esc(k)+'</span>'
+      + '<span class="time-bar"><i style="width:'+Math.max(3,Math.round(totals[k]/max*100))+'%"></i></span>'
+      + '<span class="time-val mono">'+fmtMins(totals[k])+'</span></div>';
+  }).join("") : '<div class="time-empty">No time logged for this period.</div>';
+  return '<div class="time-analysis"><div class="widget-head"><h3>Time by subject</h3><div class="cal-nav">'+tabs+'</div></div>'
+    + '<div class="time-sub"><b>'+esc(r.label)+'</b><span class="mono">'+fmtMins(grand)+' total</span></div>'
+    + rowsHtml
+    + '<div class="cal-legend">Click a calendar day to change the day and week shown.'+(sheetTime?"":" (This device only — sheet not loaded.)")+'</div></div>';
+}
+
 
 function getProgress(key){ return progressData[key] || defaultProgress(); }
 
@@ -1324,7 +1431,9 @@ function fallbackCopy(text){
 
 /* ---------- Curriculum helpers ---------- */
 function getTopics(subj,area){ return CURRICULUM[subj].areas[area].topics; }
+const UNLOCK_ALL = true; // true = every topic open; set false to restore sequential unlocking
 function isUnlocked(subj,area,idx){
+  if(UNLOCK_ALL) return true;
   if(idx===0) return true;
   const prevKey = topicKey(subj,area,idx-1);
   return getProgress(prevKey).status === "mastered";
@@ -1390,6 +1499,15 @@ function calPrevMonth(){ const c=getCalMonth(); c.m--; if(c.m<0){ c.m=11; c.y--;
 function calNextMonth(){ const c=getCalMonth(); c.m++; if(c.m>11){ c.m=0; c.y++; } render(); }
 function calendarDayData(){
   const map = {};
+  if(sheetTime){
+    sheetTime.forEach(function(e){
+      const k = dayKey(e.ts);
+      if(!map[k]) map[k] = { mins:0, count:0 };
+      map[k].mins += Math.round(e.mins);
+      map[k].count++;
+    });
+    return map;
+  }
   allAttempts().forEach(function(a){
     const k = dayKey(a.ts);
     if(!map[k]) map[k] = { mins:0, count:0 };
@@ -1736,15 +1854,17 @@ function calendarHtml(){
     const k = c.y+"-"+c.m+"-"+day;
     const d = data[k];
     const isToday = k===todayK;
+    const sl = getCalSel(); const isSel = sl.y===c.y && sl.m===c.m && sl.d===day;
     const level = !d ? "" : (d.mins>=60 ? "cal-busy" : "cal-some");
     const title = d ? (d.mins+" min logged \u00b7 "+d.count+" item"+(d.count===1?"":"s")) : "No activity logged";
-    cells += '<div class="cal-cell '+level+' '+(isToday?"cal-today":"")+'" title="'+esc(title)+'"><span class="cal-daynum">'+day+'</span></div>';
+    cells += '<div class="cal-cell '+level+' '+(isToday?"cal-today":"")+' '+(isSel?"cal-sel":"")+'" data-act="cal-day" data-y="'+c.y+'" data-m="'+c.m+'" data-d="'+day+'" title="'+esc(title)+'"><span class="cal-daynum">'+day+'</span></div>';
   }
   const dow = ["S","M","T","W","T","F","S"].map(function(x){ return '<div class="cal-dow">'+x+'</div>'; }).join("");
   return '<div class="widget-card">'
     + '<div class="widget-head"><h3>Calendar</h3><div class="cal-nav"><button class="btn btn-sm btn-ghost" data-act="cal-prev" aria-label="Previous month">\u2039</button><b class="mono" style="font-size:13px">'+esc(monthLabel)+'</b><button class="btn btn-sm btn-ghost" data-act="cal-next" aria-label="Next month">\u203a</button></div></div>'
     + '<div class="cal-grid">'+dow+cells+'</div>'
     + '<div class="cal-legend"><span class="cal-legend-dot"></span> Activity logged that day</div>'
+    + timeAnalysisHtml()
     + '</div>';
 }
 function homeHtml(){
@@ -2057,6 +2177,8 @@ function bindClicks(root){
       else if(act==="delete-task"){
         if(confirm("Delete this task?")) deleteTask(el.dataset.id);
       }
+      else if(act==="cal-day"){ calSel = { y:Number(el.dataset.y), m:Number(el.dataset.m), d:Number(el.dataset.d) }; render(); }
+      else if(act==="time-view"){ timeView = el.dataset.view; render(); }
       else if(act==="cal-prev"){ calPrevMonth(); }
       else if(act==="cal-next"){ calNextMonth(); }
       else if(act==="open-mathtest"){ startMathTest(el.dataset.grade); }
